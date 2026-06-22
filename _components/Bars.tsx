@@ -78,14 +78,14 @@ const Bars = ({ activities }: BarsProps) => {
       <div>
         <BarChart
           data={daysData}
-          yAxisLabel="Days on per week"
+          yAxisLabel="Days on / week"
           yAxisTickInterval={1}
           yAxisUnit="day"
         />
 
         <BarChart
           data={TimeData}
-          yAxisLabel="Moving time per week"
+          yAxisLabel="Moving time / week"
           yAxisTickInterval={60}
           yAxisUnit="min"
         />
