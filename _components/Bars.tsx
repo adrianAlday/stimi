@@ -1,31 +1,45 @@
 import { DateTime } from "luxon";
+import DaysChart from "./DaysChart";
+import TimeChart from "./TimeChart";
+
+type Activity = {
+  sportType: string;
+  startDateLocal: string;
+  date: string;
+  movingTime: number;
+};
 
 type BarsProps = {
-  activities: [{ [key: string]: string }];
+  activities: Activity[];
 };
 
 const Bars = ({ activities }: BarsProps) => {
   const now = DateTime.now();
 
   const filteredActivities = activities
-    .filter((activity) => activity.sport_type.includes("Run"))
-    .sort((a, b) => a.start_date_local.localeCompare(b.start_date_local));
+    .filter((activity) => activity.sportType.includes("Run"))
+    .sort((a, b) => a.startDateLocal.localeCompare(b.startDateLocal));
   const processedActivities = filteredActivities.map((activity) => {
-    const date = DateTime.fromISO(activity.start_date_local, {
+    const date = DateTime.fromISO(activity.startDateLocal, {
       zone: "UTC",
     });
-    const startOfWeek = date.startOf("week").toISODate() as string;
+    const startOfWeek = date.startOf("week");
 
     return {
-      startOfWeek,
       ...activity,
+      date: date.toISODate() as string,
+      startOfWeek: startOfWeek.toISODate() as string,
     };
   });
 
+  const groupedActivities = {} as {
+    [key: string]: Activity[];
+  };
   const lastWeekString = now.startOf("week").toISODate();
   const firstWeek = DateTime.fromISO(
     processedActivities[0].startOfWeek || lastWeekString,
   );
+  // go back at least 8, 16 weeks?
   const lastWeek = DateTime.fromISO(lastWeekString);
   const weeks = [firstWeek];
   for (let i = 0; ; i++) {
@@ -37,28 +51,36 @@ const Bars = ({ activities }: BarsProps) => {
 
     weeks.push(newWeek);
   }
-  const groupedActivities = {} as {
-    [key: string]: { [key: string]: string }[];
-  };
   weeks.forEach((week) => {
     groupedActivities[week.toISODate() as string] = [];
   });
   processedActivities.forEach((activity) => {
-    groupedActivities[activity.startOfWeek] = [
-      ...groupedActivities[activity.startOfWeek],
-      activity,
-    ];
+    groupedActivities[activity.startOfWeek].push(activity);
   });
+  const groupedActivitiesEntries = Object.entries(groupedActivities).sort(
+    (a, b) => a[0].localeCompare(b[0]),
+  );
+  const daysData = groupedActivitiesEntries.map(([week, activities]) => ({
+    label: DateTime.fromISO(week).toFormat("LL/dd"),
+    value: new Set(activities.map((activity) => activity.date)).size,
+  }));
+  const TimeData = groupedActivitiesEntries.map(([week, activities]) => ({
+    label: DateTime.fromISO(week).toFormat("LL/dd"),
+    value: Math.floor(
+      activities.reduce(
+        (accumulator, activity) => accumulator + activity.movingTime,
+        0,
+      ) / 60,
+    ),
+  }));
 
   return (
     <div>
       <div>
-        <div></div>
+        <DaysChart data={daysData} />
 
-        <div></div>
+        <TimeChart data={TimeData} />
       </div>
-
-      {/* {JSON.stringify(groupedActivities)} */}
     </div>
   );
 };

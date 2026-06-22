@@ -56,7 +56,14 @@ const HomePage = async () => {
   const activiyKeysToPluck = ["sport_type", "start_date_local", "moving_time"];
   const activities = activitiesResponse.map(
     (activity: { [key: string]: string }) =>
-      Object.fromEntries(activiyKeysToPluck.map((key) => [key, activity[key]])),
+      Object.fromEntries(
+        activiyKeysToPluck.map((key) => [
+          key
+            .replace(/[-_ ]+(.)/g, (_, character) => character.toUpperCase())
+            .replace(/^[A-Z]/, (character) => character.toLowerCase()),
+          activity[key],
+        ]),
+      ),
   );
 
   return (
