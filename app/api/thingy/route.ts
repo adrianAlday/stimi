@@ -1,9 +1,13 @@
+import { signJwt } from "@/app/_utils/jwt";
+import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
 export const GET = async (request: NextRequest) => {
   const searchParamsObject = Object.fromEntries(
     request.nextUrl.searchParams.entries(),
   );
+
+  // console.log("searchParamsObject", searchParamsObject);
 
   const authorizationCodeResponse = await fetch(
     "https://www.strava.com/api/v3/oauth/token",
@@ -41,5 +45,21 @@ export const GET = async (request: NextRequest) => {
 
   console.log("refreshTokenResponse", refreshTokenResponse);
 
-  return NextResponse.json({});
+  // store tokens in db
+
+  const { athlete } = authorizationCodeResponse;
+  const { id } = athlete;
+  const cookieData = { id };
+
+  const token = await signJwt(cookieData);
+
+  const cookieStore = await cookies();
+
+  cookieStore.set("token", token, {
+    httpOnly: false,
+    path: "/",
+    sameSite: "lax",
+  });
+
+  return NextResponse.redirect(new URL("/", request.url));
 };
