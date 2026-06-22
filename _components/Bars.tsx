@@ -1,6 +1,5 @@
 import { DateTime } from "luxon";
-import DaysChart from "./DaysChart";
-import TimeChart from "./TimeChart";
+import BarChart from "./BarChart";
 
 type Activity = {
   sportType: string;
@@ -77,9 +76,19 @@ const Bars = ({ activities }: BarsProps) => {
   return (
     <div>
       <div>
-        <DaysChart data={daysData} />
+        <BarChart
+          data={daysData}
+          yAxisLabel="Days on per week"
+          yAxisTickInterval={1}
+          yAxisUnit="day"
+        />
 
-        <TimeChart data={TimeData} />
+        <BarChart
+          data={TimeData}
+          yAxisLabel="Moving time per week"
+          yAxisTickInterval={60}
+          yAxisUnit="min"
+        />
       </div>
     </div>
   );

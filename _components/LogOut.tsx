@@ -12,7 +12,11 @@ const deleteCookie = async () => {
 };
 
 const LogOut = () => {
-  return <button onClick={deleteCookie}>log out</button>;
+  return (
+    <button onClick={deleteCookie} className="p-4 text-xs">
+      log out
+    </button>
+  );
 };
 
 export default LogOut;
