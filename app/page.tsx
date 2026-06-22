@@ -53,7 +53,7 @@ const HomePage = async () => {
     `${baseUrl}/api/activities?${activitiesQueryString}`,
   ).then(async (response) => await response.json());
 
-  const activiyKeysToPluck = ["sport_type", "moving_time", "start_date_local"];
+  const activiyKeysToPluck = ["sport_type", "start_date_local", "moving_time"];
   const activities = activitiesResponse.map(
     (activity: { [key: string]: string }) =>
       Object.fromEntries(activiyKeysToPluck.map((key) => [key, activity[key]])),
@@ -70,5 +70,8 @@ const HomePage = async () => {
 
 export default HomePage;
 
+// learn from other apps https://www.strava.com/settings/apps
 // loader
-// use strava profile pic?
+// use strava profile pic in corner?
+// store activities?
+// refresh button?
