@@ -2,6 +2,7 @@ import { cookies, headers } from "next/headers";
 import { cookieName, verifyJwt } from "./_utils/cookies";
 import { redirect } from "next/navigation";
 import LogOut from "@/_components/LogOut";
+import Bars from "@/_components/Bars";
 
 const getCookie = async () => {
   try {
@@ -52,9 +53,15 @@ const HomePage = async () => {
     `${baseUrl}/api/activities?${activitiesQueryString}`,
   ).then(async (response) => await response.json());
 
+  const activiyKeysToPluck = ["sport_type", "moving_time", "start_date_local"];
+  const activities = activitiesResponse.map(
+    (activity: { [key: string]: string }) =>
+      Object.fromEntries(activiyKeysToPluck.map((key) => [key, activity[key]])),
+  );
+
   return (
     <main>
-      <div>{JSON.stringify(activitiesResponse)}</div>
+      <Bars activities={activities} />
 
       <LogOut />
     </main>
@@ -63,4 +70,5 @@ const HomePage = async () => {
 
 export default HomePage;
 
+// loader
 // use strava profile pic?
