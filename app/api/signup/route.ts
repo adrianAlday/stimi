@@ -1,0 +1,55 @@
+import { cookieName, signJwt } from "@/app/_utils/cookies";
+import { createClient } from "@/app/_utils/supabase/server";
+import { cookies } from "next/headers";
+import { NextRequest, NextResponse } from "next/server";
+
+export const GET = async (request: NextRequest) => {
+  const authorizationCodeResponse = await fetch(
+    "https://www.strava.com/api/v3/oauth/token",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        client_id: Number(process.env.NEXT_PUBLIC_STRAVA_CLIENT_ID),
+        client_secret: process.env.STRAVA_CLIENT_SECRET,
+        grant_type: "authorization_code",
+        code: Object.fromEntries(request.nextUrl.searchParams.entries()).code,
+      }),
+    },
+  ).then(async (response) => await response.json());
+
+  const {
+    athlete: { id },
+    scope,
+    refresh_token,
+  } = authorizationCodeResponse;
+
+  const supabase = await createClient();
+
+  const upsertResponse = await supabase.from("strava_refresh_tokens").upsert(
+    {
+      id,
+      scope,
+      refresh_token,
+    },
+    { onConflict: "id" },
+  );
+
+  if (upsertResponse.success) {
+    const cookieData = { id };
+
+    const token = await signJwt(cookieData);
+
+    const cookieStore = await cookies();
+
+    cookieStore.set(cookieName, token, {
+      httpOnly: false,
+      path: "/",
+      sameSite: "lax",
+    });
+
+    return NextResponse.redirect(new URL("/", request.url));
+  }
+};

@@ -1,17 +1,19 @@
 import { cookies, headers } from "next/headers";
-import Link from "next/link";
-import { verifyJwt } from "./_utils/jwt";
+import { cookieName, verifyJwt } from "./_utils/cookies";
+import { redirect } from "next/navigation";
+import LogOut from "@/_components/LogOut";
 
-const getSessionData = async () => {
+const getCookie = async () => {
   try {
     const cookieStore = await cookies();
-    const token = cookieStore.get("token")?.value;
 
-    if (!token) {
+    const cookie = cookieStore.get(cookieName)?.value;
+
+    if (!cookie) {
       return null;
     }
 
-    const payload = await verifyJwt(token);
+    const payload = await verifyJwt(cookie);
 
     return payload;
   } catch (error) {
@@ -22,36 +24,43 @@ const getSessionData = async () => {
 };
 
 const HomePage = async () => {
+  const cookie = await getCookie();
+
+  if (!cookie?.id) {
+    redirect("/signup");
+  }
+
   const resolvedHeaders = await headers();
   const host = resolvedHeaders.get("host");
-  const referer = resolvedHeaders.get("referer");
+  const baseUrl = `http://${host}`;
 
-  // console.log("referer", referer);
+  const accessTokenParams = {
+    id: `${cookie.id}`,
+  };
+  const accessTokenQueryString = new URLSearchParams(
+    accessTokenParams,
+  ).toString();
+  const accessTokenResponse = await fetch(
+    `${baseUrl}/api/access-token?${accessTokenQueryString}`,
+  ).then(async (response) => await response.json());
 
-  const session = await getSessionData();
-
-  // console.log("session", session);
+  const activitesParams = {
+    accessToken: accessTokenResponse.access_token,
+  };
+  const activitiesQueryString = new URLSearchParams(activitesParams).toString();
+  const activitiesResponse = await fetch(
+    `${baseUrl}/api/activities?${activitiesQueryString}`,
+  ).then(async (response) => await response.json());
 
   return (
-    <div>
-      <main>
-        <button>
-          <Link
-            href={
-              `http://www.strava.com/oauth/authorize?` +
-              `&response_type=code` +
-              `&client_id=${process.env.NEXT_PUBLIC_STRAVA_CLIENT_ID}` +
-              `&scope=activity:read_all` +
-              `&redirect_uri=http://${host}/api/thingy` +
-              `&state=${referer}`
-            }
-          >
-            <div>authorize</div>
-          </Link>
-        </button>
-      </main>
-    </div>
+    <main>
+      <div>{JSON.stringify(activitiesResponse)}</div>
+
+      <LogOut />
+    </main>
   );
 };
 
 export default HomePage;
+
+// use strava profile pic?
