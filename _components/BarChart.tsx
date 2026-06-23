@@ -7,24 +7,17 @@ type BarChartProps = {
   data: { label: string; value: number }[];
   yAxisLabel: string;
   yAxisTickInterval: number;
-  yAxisUnit: string;
 };
 
-const BarChart = ({
-  data,
-  yAxisLabel,
-  yAxisTickInterval,
-  yAxisUnit,
-}: BarChartProps) => {
+const BarChart = ({ data, yAxisLabel, yAxisTickInterval }: BarChartProps) => {
   const svgRef = useRef<SVGSVGElement | null>(null);
-  const tooltipRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     if (!svgRef.current || data.length === 0) return;
 
     const width = 50 * data.length;
     const height = 400;
-    const margin = { top: 20, right: 20, bottom: 40, left: 40 };
+    const margin = { top: 32, right: 16, bottom: 32, left: 64 };
     const innerWidth = width - margin.left - margin.right;
     const innerHeight = height - margin.top - margin.bottom;
 
@@ -50,12 +43,15 @@ const BarChart = ({
       .nice()
       .range([innerHeight, 0]);
 
-    const xAxis = d3.axisBottom(xScale);
+    const xAxis = d3.axisBottom(xScale).tickSizeOuter(0);
+
     g.append("g")
       .attr("transform", `translate(0,${innerHeight})`)
       .call(xAxis)
+      .call((g) => g.selectAll(".tick line").remove())
       .selectAll("text")
-      .style("text-anchor", "middle");
+      .style("text-anchor", "middle")
+      .attr("font-size", "16px");
 
     const maxValue = d3.max(data, (d) => d.value) ?? 0;
 
@@ -66,30 +62,27 @@ const BarChart = ({
 
     g.append("g")
       .call(yAxis)
+      .call((g) =>
+        g
+          .selectAll("text")
+          .attr("font-size", "16px")
+          .attr("fill", "rgb(255,255,255)"),
+      )
       .append("text")
       .attr("transform", "rotate(-90)")
-      .attr("y", -margin.left + 10)
+      .attr("y", -margin.left + 16)
       .attr("x", -innerHeight / 2)
       .attr("text-anchor", "middle")
       .attr("fill", "rgb(255,255,255)")
-      .attr("font-size", "12px")
+      .attr("font-size", "16px")
       .text(yAxisLabel);
 
-    const tooltip = d3.select(tooltipRef.current);
-
-    const clickLabel = g
-      .append("text")
-      .attr("text-anchor", "middle")
-      .attr("font-size", "14px")
-      .attr("font-weight", "bold")
-      .attr("fill", "rgb(255,255,255)")
-      .attr("opacity", 0)
-      .attr("pointer-events", "none");
-
     const defaultOpacity = 1.0;
+    const drawTransitionTime = 800;
+    const drawTransitionDelay = 100;
+    const hoverTransisitonTime = 100;
 
-    const bars = g
-      .selectAll(".bar")
+    g.selectAll(".bar")
       .data(data)
       .enter()
       .append("rect")
@@ -102,67 +95,50 @@ const BarChart = ({
       .attr("fill", "rgb(252, 82, 0)")
       .attr("opacity", defaultOpacity)
       .on("mouseenter", function (_event, _d) {
-        d3.select(this).transition().duration(200).attr("opacity", 0.7);
-
-        tooltip.style("opacity", 1).style("visibility", "visible");
-      })
-      .on("mousemove", function (event, d) {
-        const [x, y] = d3.pointer(event, svgRef.current);
-
-        tooltip
-          .html(
-            `<strong>${d.label}</strong>: ${d.value} ${yAxisUnit}${d.value === 1 ? "" : "s"}`,
-          )
-          .style("left", `${x + 15}px`)
-          .style("top", `${y - 15}px`);
+        d3.select(this)
+          .transition()
+          .duration(hoverTransisitonTime)
+          .attr("opacity", 0.7);
       })
       .on("mouseleave", function (_event, _d) {
         d3.select(this)
           .transition()
-          .duration(200)
+          .duration(hoverTransisitonTime)
           .attr("opacity", defaultOpacity);
-
-        tooltip.style("opacity", 0).style("visibility", "hidden");
       })
-      .on("click", function (_event, d) {
-        const xPos = (xScale(d.label) as number) + xScale.bandwidth() / 2;
-
-        const yPos = yScale(d.value) - 10;
-
-        clickLabel
-          .text(d.value)
-          .attr("x", xPos)
-          .attr("y", yPos + 10)
-          .transition()
-          .duration(200)
-          .attr("y", yPos)
-          .attr("opacity", 1);
-      });
-
-    bars
       .attr("y", innerHeight)
       .attr("height", 0)
       .transition()
-      .duration(800)
+      .duration(drawTransitionTime)
       .ease(d3.easeCubicOut)
-      .delay((_d, index) => index * 100)
+      .delay((_d, index) => index * drawTransitionDelay)
       .attr("y", (d) => yScale(d.value))
       .attr("height", (d) => innerHeight - yScale(d.value));
+
+    g.selectAll(".value-label")
+      .data(data)
+      .enter()
+      .append("text")
+      .attr("class", "value-label")
+      .text((d) => d.value)
+      .attr("x", (d) => (xScale(d.label) as number) + xScale.bandwidth() / 2)
+      .attr("y", innerHeight)
+      .attr("opacity", 0)
+      .attr("text-anchor", "middle")
+      .attr("font-size", "16px")
+      .attr("fill", "rgb(255,255,255)")
+      .attr("pointer-events", "none")
+      .transition()
+      .duration(drawTransitionTime)
+      .ease(d3.easeCubicOut)
+      .delay((_d, index) => index * drawTransitionDelay)
+      .attr("y", (d) => yScale(d.value) - 8)
+      .attr("opacity", 1);
   }, [data]);
 
   return (
     <div className="w-full p-4 relative">
       <svg ref={svgRef} />
-
-      <div
-        ref={tooltipRef}
-        className="absolute z-10 px-3 py-2 text-sm text-white bg-gray-900 rounded shadow-lg pointer-events-none"
-        style={{
-          opacity: 0,
-          visibility: "hidden",
-          transition: "opacity 0.2s",
-        }}
-      />
     </div>
   );
 };

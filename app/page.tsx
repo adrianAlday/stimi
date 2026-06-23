@@ -3,6 +3,7 @@ import { cookieName, verifyJwt } from "./_utils/cookies";
 import { redirect } from "next/navigation";
 import LogOut from "@/_components/LogOut";
 import Bars from "@/_components/Bars";
+import { isDev } from "./_utils/isDev";
 
 const getCookie = async () => {
   try {
@@ -70,7 +71,7 @@ const HomePage = async () => {
     <main>
       <Bars activities={activities} />
 
-      <LogOut />
+      {isDev && <LogOut />}
     </main>
   );
 };
@@ -83,3 +84,5 @@ export default HomePage;
 // store activities?
 // refresh button?
 // make strava auth the callback domain then redirect to stimi
+// redirect from signup to main page if has cookie
+// add admin mode

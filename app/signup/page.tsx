@@ -20,7 +20,7 @@ const SignupPage = async () => {
             `&state=${referer}`
           }
         >
-          <div className="p-4 text-xs">sign up</div>
+          <div className="p-4">sign up</div>
         </Link>
       </button>
     </main>

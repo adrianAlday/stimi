@@ -59,12 +59,13 @@ const Bars = ({ activities }: BarsProps) => {
   const groupedActivitiesEntries = Object.entries(groupedActivities).sort(
     (a, b) => a[0].localeCompare(b[0]),
   );
+  const dateFormat = "L/d";
   const daysData = groupedActivitiesEntries.map(([week, activities]) => ({
-    label: DateTime.fromISO(week).toFormat("LL/dd"),
+    label: DateTime.fromISO(week).toFormat(dateFormat),
     value: new Set(activities.map((activity) => activity.date)).size,
   }));
   const TimeData = groupedActivitiesEntries.map(([week, activities]) => ({
-    label: DateTime.fromISO(week).toFormat("LL/dd"),
+    label: DateTime.fromISO(week).toFormat(dateFormat),
     value: Math.floor(
       activities.reduce(
         (accumulator, activity) => accumulator + activity.movingTime,
@@ -80,14 +81,12 @@ const Bars = ({ activities }: BarsProps) => {
           data={daysData}
           yAxisLabel="Days on / week"
           yAxisTickInterval={1}
-          yAxisUnit="day"
         />
 
         <BarChart
           data={TimeData}
           yAxisLabel="Moving time / week"
           yAxisTickInterval={60}
-          yAxisUnit="min"
         />
       </div>
     </div>
