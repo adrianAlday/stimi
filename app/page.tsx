@@ -46,26 +46,39 @@ const HomePage = async () => {
     `${baseUrl}/api/access-token?${accessTokenQueryString}`,
   ).then(async (response) => await response.json());
 
-  const activitesParams = {
-    accessToken: accessTokenResponse.access_token,
-  };
-  const activitiesQueryString = new URLSearchParams(activitesParams).toString();
-  const activitiesResponse = await fetch(
-    `${baseUrl}/api/activities?${activitiesQueryString}`,
-  ).then(async (response) => await response.json());
+  const activities = [];
 
-  const activiyKeysToPluck = ["sport_type", "start_date_local", "moving_time"];
-  const activities = activitiesResponse.map(
-    (activity: { [key: string]: string }) =>
-      Object.fromEntries(
-        activiyKeysToPluck.map((key) => [
-          key
-            .replace(/[-_ ]+(.)/g, (_, character) => character.toUpperCase())
-            .replace(/^[A-Z]/, (character) => character.toLowerCase()),
-          activity[key],
-        ]),
+  for (let i = 0; i < 2; i++) {
+    const activitesParams = {
+      accessToken: accessTokenResponse.access_token,
+      page: `${i + 1}`,
+    };
+    const activitiesQueryString = new URLSearchParams(
+      activitesParams,
+    ).toString();
+    const activitiesResponse = await fetch(
+      `${baseUrl}/api/activities?${activitiesQueryString}`,
+    ).then(async (response) => await response.json());
+
+    const activiyKeysToPluck = [
+      "sport_type",
+      "start_date_local",
+      "moving_time",
+    ];
+
+    activities.push(
+      ...activitiesResponse.map((activity: { [key: string]: string }) =>
+        Object.fromEntries(
+          activiyKeysToPluck.map((key) => [
+            key
+              .replace(/[-_ ]+(.)/g, (_, character) => character.toUpperCase())
+              .replace(/^[A-Z]/, (character) => character.toLowerCase()),
+            activity[key],
+          ]),
+        ),
       ),
-  );
+    );
+  }
 
   return (
     <main>
@@ -87,3 +100,5 @@ export default HomePage;
 // redirect from signup to main page if has cookie
 // add admin mode
 // add year label on first week of year
+// add x number of weeks?
+// skip first week in case its partial?
