@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react";
 import * as d3 from "d3";
 
 type BarChartProps = {
-  data: { label: string; value: number }[];
+  data: { label: string; sublabel?: string; value: number }[];
   title: string;
   tickInterval: number;
 };
@@ -16,7 +16,7 @@ const BarChart = ({ data, title, tickInterval }: BarChartProps) => {
   const width = 50 * data.length;
 
   useEffect(() => {
-    const margin = { left: 0, top: 32, right: 40, bottom: 24 };
+    const margin = { left: 0, top: 32, right: 40, bottom: 40 };
     const innerWidth = width - margin.left - margin.right;
     const innerHeight = height - margin.top - margin.bottom;
 
@@ -46,13 +46,28 @@ const BarChart = ({ data, title, tickInterval }: BarChartProps) => {
       .range([innerHeight, 0]);
 
     const xAxis = d3.axisBottom(xScale).tickSizeOuter(0);
-    g.append("g")
+    const xAxisGroup = g
+      .append("g")
       .attr("transform", `translate(0,${innerHeight})`)
-      .call(xAxis)
-      .call((g) => g.selectAll(".tick line").remove())
+      .call(xAxis);
+    xAxisGroup.selectAll(".tick line").remove();
+    xAxisGroup
       .selectAll("text")
       .style("text-anchor", "middle")
       .attr("font-size", "16px");
+    xAxisGroup.selectAll(".tick").each(function (labelString) {
+      const dataPoint = data.find((d) => d.label === labelString);
+
+      if (dataPoint?.sublabel) {
+        d3.select(this)
+          .append("text")
+          .attr("y", 40)
+          .style("text-anchor", "middle")
+          .attr("font-size", "16px")
+          .attr("fill", "rgb(255,255,255)")
+          .text(dataPoint.sublabel);
+      }
+    });
 
     const yAxis = d3
       .axisRight(yScale)
@@ -145,6 +160,7 @@ const BarChart = ({ data, title, tickInterval }: BarChartProps) => {
       .attr("opacity", 1)
       .tween("text", (d) => {
         const interpolator = d3.interpolateRound(0, d.value);
+
         return function (time) {
           this.textContent = interpolator(time) as unknown as string;
         };

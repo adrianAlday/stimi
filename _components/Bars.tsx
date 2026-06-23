@@ -59,13 +59,24 @@ const Bars = ({ activities }: BarsProps) => {
   const groupedActivitiesEntries = Object.entries(groupedActivities).sort(
     (a, b) => a[0].localeCompare(b[0]),
   );
-  const dateFormat = "L/d";
+  const getLabels = (week: string) => {
+    const date = DateTime.fromISO(week);
+    const label = date.toFormat("L/d");
+    const [month, day] = label.split("/");
+    const sublabel =
+      month === "1" && Number(day) <= 7 ? date.toFormat("yyyy") : undefined;
+
+    return {
+      label,
+      sublabel,
+    };
+  };
   const daysData = groupedActivitiesEntries.map(([week, activities]) => ({
-    label: DateTime.fromISO(week).toFormat(dateFormat),
+    ...getLabels(week),
     value: new Set(activities.map((activity) => activity.date)).size,
   }));
   const TimeData = groupedActivitiesEntries.map(([week, activities]) => ({
-    label: DateTime.fromISO(week).toFormat(dateFormat),
+    ...getLabels(week),
     value: Math.floor(
       activities.reduce(
         (accumulator, activity) => accumulator + activity.movingTime,
