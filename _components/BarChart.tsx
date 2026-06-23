@@ -12,11 +12,16 @@ type BarChartProps = {
 const BarChart = ({ data, title, tickInterval }: BarChartProps) => {
   const svgRef = useRef<SVGSVGElement | null>(null);
 
-  const height = 280;
-  const width = 50 * data.length;
+  const height =
+    48 +
+    24 *
+      Math.ceil(
+        Math.max(...data.map((dataPoint) => dataPoint.value)) / tickInterval,
+      );
+  const width = 48 + 48 * data.length;
 
   useEffect(() => {
-    const margin = { left: 0, top: 32, right: 40, bottom: 40 };
+    const margin = { left: 0, top: 32, right: 48, bottom: 48 };
     const innerWidth = width - margin.left - margin.right;
     const innerHeight = height - margin.top - margin.bottom;
 

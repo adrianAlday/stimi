@@ -102,3 +102,8 @@ export default HomePage;
 // add year label on first week of year
 // add x number of weeks?
 // skip first week in case its partial?
+// figure out exact formula for ramp line
+// last column red/green if it meets ramp
+// load more button for more pages?
+// height dependent on data vs ticks?
+// or make ticks change to not be crammed?
