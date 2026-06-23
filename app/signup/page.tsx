@@ -22,6 +22,19 @@ const SignupPage = async () => {
         >
           <div className="p-4">sign up</div>
         </Link>
+
+        <Link
+          href={
+            `http://www.strava.com/oauth/mobile/authorize?` +
+            `&response_type=code` +
+            `&client_id=${process.env.NEXT_PUBLIC_STRAVA_CLIENT_ID}` +
+            `&scope=activity:read_all` +
+            `&redirect_uri=http${isDev ? "" : "s"}://${host}/api/signup` +
+            `&state=${referer}`
+          }
+        >
+          <div className="p-4">mobile sign up</div>
+        </Link>
       </button>
     </main>
   );
