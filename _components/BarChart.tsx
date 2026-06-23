@@ -90,7 +90,6 @@ const BarChart = ({ data, title, tickInterval }: BarChartProps) => {
 
     const drawTransitionTime = 700;
     const drawTransitionDelay = 50;
-    const hoverTransisitonTime = 50;
 
     const defs = svg.append("defs");
     const gradient = defs
@@ -121,18 +120,6 @@ const BarChart = ({ data, title, tickInterval }: BarChartProps) => {
       .attr("rx", 6)
       .attr("fill", "url(#bar-gradient)")
       .attr("opacity", defaultOpacity)
-      .on("mouseenter", function (_event, _d) {
-        d3.select(this)
-          .transition()
-          .duration(hoverTransisitonTime)
-          .attr("opacity", hoverOpacity);
-      })
-      .on("mouseleave", function (_event, _d) {
-        d3.select(this)
-          .transition()
-          .duration(hoverTransisitonTime)
-          .attr("opacity", defaultOpacity);
-      })
       .attr("y", innerHeight)
       .attr("height", 0)
       .transition()
@@ -167,6 +154,7 @@ const BarChart = ({ data, title, tickInterval }: BarChartProps) => {
           this.textContent = interpolator(time) as unknown as string;
         };
       });
+
     window.scrollTo({
       left: document.documentElement.scrollWidth,
       top: 0,
