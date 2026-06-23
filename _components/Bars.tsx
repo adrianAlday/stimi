@@ -77,16 +77,12 @@ const Bars = ({ activities }: BarsProps) => {
   return (
     <div>
       <div>
-        <BarChart
-          data={daysData}
-          yAxisLabel="Days on / week"
-          yAxisTickInterval={1}
-        />
+        <BarChart data={daysData} title={"Days on / week"} tickInterval={1} />
 
         <BarChart
           data={TimeData}
-          yAxisLabel="Moving time / week"
-          yAxisTickInterval={60}
+          title={"Moving time / week"}
+          tickInterval={60}
         />
       </div>
     </div>

@@ -5,29 +5,30 @@ import * as d3 from "d3";
 
 type BarChartProps = {
   data: { label: string; value: number }[];
-  yAxisLabel: string;
-  yAxisTickInterval: number;
+  title: string;
+  tickInterval: number;
 };
 
-const BarChart = ({ data, yAxisLabel, yAxisTickInterval }: BarChartProps) => {
+const BarChart = ({ data, title, tickInterval }: BarChartProps) => {
   const svgRef = useRef<SVGSVGElement | null>(null);
 
-  useEffect(() => {
-    if (!svgRef.current || data.length === 0) return;
+  const height = 280;
+  const width = 50 * data.length;
 
-    const width = 50 * data.length;
-    const height = 400;
-    const margin = { top: 32, right: 16, bottom: 32, left: 64 };
-    const innerWidth = width - margin.left - margin.right;
-    const innerHeight = height - margin.top - margin.bottom;
+  useEffect(() => {
+    if (!svgRef.current || data.length === 0) {
+      return;
+    }
 
     const svg = d3.select(svgRef.current);
 
     svg.selectAll("*").remove();
 
+    const margin = { left: 0, top: 32, right: 40, bottom: 24 };
+    const innerWidth = width - margin.left - margin.right;
+    const innerHeight = height - margin.top - margin.bottom;
+
     const g = svg
-      .attr("width", width)
-      .attr("height", height)
       .append("g")
       .attr("transform", `translate(${margin.left},${margin.top})`);
 
@@ -35,11 +36,13 @@ const BarChart = ({ data, yAxisLabel, yAxisTickInterval }: BarChartProps) => {
       .scaleBand()
       .domain(data.map((d) => d.label))
       .range([0, innerWidth])
-      .padding(0.2);
+      .padding(20 / 100);
+
+    const maxValue = d3.max(data, (d) => d.value) ?? 0;
 
     const yScale = d3
       .scaleLinear()
-      .domain([0, d3.max(data, (d) => d.value) ?? 0])
+      .domain([0, maxValue])
       .nice()
       .range([innerHeight, 0]);
 
@@ -53,34 +56,27 @@ const BarChart = ({ data, yAxisLabel, yAxisTickInterval }: BarChartProps) => {
       .style("text-anchor", "middle")
       .attr("font-size", "16px");
 
-    const maxValue = d3.max(data, (d) => d.value) ?? 0;
-
     const yAxis = d3
-      .axisLeft(yScale)
-      .tickValues(d3.range(0, maxValue + yAxisTickInterval, yAxisTickInterval))
+      .axisRight(yScale)
+      .tickValues(d3.range(0, maxValue + tickInterval, tickInterval))
       .tickFormat(d3.format("d"));
 
     g.append("g")
+      .attr("transform", `translate(${innerWidth}, 0)`)
       .call(yAxis)
       .call((g) =>
         g
           .selectAll("text")
           .attr("font-size", "16px")
           .attr("fill", "rgb(255,255,255)"),
-      )
-      .append("text")
-      .attr("transform", "rotate(-90)")
-      .attr("y", -margin.left + 16)
-      .attr("x", -innerHeight / 2)
-      .attr("text-anchor", "middle")
-      .attr("fill", "rgb(255,255,255)")
-      .attr("font-size", "16px")
-      .text(yAxisLabel);
+      );
 
     const defaultOpacity = 1.0;
-    const drawTransitionTime = 800;
-    const drawTransitionDelay = 100;
-    const hoverTransisitonTime = 100;
+    const hoverOpacity = 0.7;
+
+    const drawTransitionTime = 700;
+    const drawTransitionDelay = 50;
+    const hoverTransisitonTime = 50;
 
     g.selectAll(".bar")
       .data(data)
@@ -98,7 +94,7 @@ const BarChart = ({ data, yAxisLabel, yAxisTickInterval }: BarChartProps) => {
         d3.select(this)
           .transition()
           .duration(hoverTransisitonTime)
-          .attr("opacity", 0.7);
+          .attr("opacity", hoverOpacity);
       })
       .on("mouseleave", function (_event, _d) {
         d3.select(this)
@@ -133,12 +129,20 @@ const BarChart = ({ data, yAxisLabel, yAxisTickInterval }: BarChartProps) => {
       .ease(d3.easeCubicOut)
       .delay((_d, index) => index * drawTransitionDelay)
       .attr("y", (d) => yScale(d.value) - 8)
-      .attr("opacity", 1);
+      .attr("opacity", defaultOpacity);
+
+    window.scrollTo({
+      left: document.documentElement.scrollWidth,
+      top: 0,
+      behavior: "smooth",
+    });
   }, [data]);
 
   return (
-    <div className="w-full p-4 relative">
-      <svg ref={svgRef} />
+    <div className="my-4 px-4 w-max">
+      <div className="inline sticky left-4">{title}</div>
+
+      <svg ref={svgRef} height={height} width={width} />
     </div>
   );
 };
