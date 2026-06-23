@@ -86,3 +86,4 @@ export default HomePage;
 // make strava auth the callback domain then redirect to stimi
 // redirect from signup to main page if has cookie
 // add admin mode
+// add year label on first week of year
