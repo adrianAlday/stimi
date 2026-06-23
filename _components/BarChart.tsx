@@ -85,9 +85,6 @@ const BarChart = ({ data, title, tickInterval }: BarChartProps) => {
           .attr("stroke-dasharray", "4,4"),
       );
 
-    const defaultOpacity = 1.0;
-    const hoverOpacity = 0.7;
-
     const drawTransitionTime = 700;
     const drawTransitionDelay = 50;
 
@@ -119,7 +116,6 @@ const BarChart = ({ data, title, tickInterval }: BarChartProps) => {
       .attr("height", (d) => innerHeight - yScale(d.value))
       .attr("rx", 6)
       .attr("fill", "url(#bar-gradient)")
-      .attr("opacity", defaultOpacity)
       .attr("y", innerHeight)
       .attr("height", 0)
       .transition()
@@ -147,7 +143,7 @@ const BarChart = ({ data, title, tickInterval }: BarChartProps) => {
       .ease(d3.easeCubicOut)
       .delay((_d, index) => index * drawTransitionDelay)
       .attr("y", (d) => yScale(d.value) - 8)
-      .attr("opacity", defaultOpacity)
+      .attr("opacity", 1)
       .tween("text", (d) => {
         const interpolator = d3.interpolateRound(0, d.value);
         return function (time) {
