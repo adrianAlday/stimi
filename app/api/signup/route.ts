@@ -48,6 +48,7 @@ export const GET = async (request: NextRequest) => {
       httpOnly: false,
       path: "/",
       sameSite: "lax",
+      maxAge: 60 * 60 * 24 * 400,
     });
 
     return NextResponse.redirect(new URL("/", request.url));

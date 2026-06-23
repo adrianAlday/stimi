@@ -82,3 +82,4 @@ export default HomePage;
 // use strava profile pic in corner?
 // store activities?
 // refresh button?
+// make strava auth the callback domain then redirect to stimi
