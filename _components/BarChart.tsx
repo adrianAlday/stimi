@@ -16,6 +16,10 @@ const BarChart = ({ data, title, tickInterval }: BarChartProps) => {
   const width = 50 * data.length;
 
   useEffect(() => {
+    const margin = { left: 0, top: 32, right: 40, bottom: 24 };
+    const innerWidth = width - margin.left - margin.right;
+    const innerHeight = height - margin.top - margin.bottom;
+
     if (!svgRef.current || data.length === 0) {
       return;
     }
@@ -23,10 +27,6 @@ const BarChart = ({ data, title, tickInterval }: BarChartProps) => {
     const svg = d3.select(svgRef.current);
 
     svg.selectAll("*").remove();
-
-    const margin = { left: 0, top: 32, right: 40, bottom: 24 };
-    const innerWidth = width - margin.left - margin.right;
-    const innerHeight = height - margin.top - margin.bottom;
 
     const g = svg
       .append("g")
@@ -47,7 +47,6 @@ const BarChart = ({ data, title, tickInterval }: BarChartProps) => {
       .range([innerHeight, 0]);
 
     const xAxis = d3.axisBottom(xScale).tickSizeOuter(0);
-
     g.append("g")
       .attr("transform", `translate(0,${innerHeight})`)
       .call(xAxis)
@@ -60,7 +59,6 @@ const BarChart = ({ data, title, tickInterval }: BarChartProps) => {
       .axisRight(yScale)
       .tickValues(d3.range(0, maxValue + tickInterval, tickInterval))
       .tickFormat(d3.format("d"));
-
     g.append("g")
       .attr("transform", `translate(${innerWidth}, 0)`)
       .call(yAxis)
@@ -71,12 +69,45 @@ const BarChart = ({ data, title, tickInterval }: BarChartProps) => {
           .attr("fill", "rgb(255,255,255)"),
       );
 
+    const yAxisGrid = d3
+      .axisLeft(yScale)
+      .tickSize(-innerWidth)
+      .tickFormat(() => "")
+      .tickValues(d3.range(0, maxValue + tickInterval, tickInterval));
+    g.append("g")
+      .attr("class", "grid-lines")
+      .call(yAxisGrid)
+      .call((g) => g.select(".domain").remove())
+      .call((g) =>
+        g
+          .selectAll(".tick line")
+          .attr("stroke", "rgba(255, 255, 255, 0.1)")
+          .attr("stroke-dasharray", "4,4"),
+      );
+
     const defaultOpacity = 1.0;
     const hoverOpacity = 0.7;
 
     const drawTransitionTime = 700;
     const drawTransitionDelay = 50;
     const hoverTransisitonTime = 50;
+
+    const defs = svg.append("defs");
+    const gradient = defs
+      .append("linearGradient")
+      .attr("id", "bar-gradient")
+      .attr("x1", "0%")
+      .attr("y1", "100%")
+      .attr("x2", "0%")
+      .attr("y2", "0%");
+    gradient
+      .append("stop")
+      .attr("offset", "0%")
+      .attr("stop-color", "rgba(252, 82, 0, 0.33)");
+    gradient
+      .append("stop")
+      .attr("offset", "100%")
+      .attr("stop-color", "rgba(252, 82, 0, 1.0)");
 
     g.selectAll(".bar")
       .data(data)
@@ -88,7 +119,7 @@ const BarChart = ({ data, title, tickInterval }: BarChartProps) => {
       .attr("width", xScale.bandwidth())
       .attr("height", (d) => innerHeight - yScale(d.value))
       .attr("rx", 6)
-      .attr("fill", "rgb(252, 82, 0)")
+      .attr("fill", "url(#bar-gradient)")
       .attr("opacity", defaultOpacity)
       .on("mouseenter", function (_event, _d) {
         d3.select(this)
@@ -116,7 +147,7 @@ const BarChart = ({ data, title, tickInterval }: BarChartProps) => {
       .enter()
       .append("text")
       .attr("class", "value-label")
-      .text((d) => d.value)
+      .text(0)
       .attr("x", (d) => (xScale(d.label) as number) + xScale.bandwidth() / 2)
       .attr("y", innerHeight)
       .attr("opacity", 0)
@@ -129,8 +160,13 @@ const BarChart = ({ data, title, tickInterval }: BarChartProps) => {
       .ease(d3.easeCubicOut)
       .delay((_d, index) => index * drawTransitionDelay)
       .attr("y", (d) => yScale(d.value) - 8)
-      .attr("opacity", defaultOpacity);
-
+      .attr("opacity", defaultOpacity)
+      .tween("text", (d) => {
+        const interpolator = d3.interpolateRound(0, d.value);
+        return function (time) {
+          this.textContent = interpolator(time) as unknown as string;
+        };
+      });
     window.scrollTo({
       left: document.documentElement.scrollWidth,
       top: 0,
