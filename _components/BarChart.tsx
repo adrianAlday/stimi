@@ -42,8 +42,7 @@ const BarChart = ({ data, title, tickInterval }: BarChartProps) => {
 
     const yScale = d3
       .scaleLinear()
-      .domain([0, maxValue])
-      .nice()
+      .domain([0, Math.min(Math.ceil(maxValue / tickInterval) * tickInterval)])
       .range([innerHeight, 0]);
 
     const xAxis = d3.axisBottom(xScale).tickSizeOuter(0);
