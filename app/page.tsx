@@ -82,9 +82,11 @@ const HomePage = async () => {
 
   return (
     <main>
-      <Bars activities={activities} />
+      <div className="h-dvh flex justify-center">
+        <Bars activities={activities} />
 
-      {false && isDev && <LogOut />}
+        {false && isDev && <LogOut />}
+      </div>
     </main>
   );
 };
