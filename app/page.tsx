@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import LogOut from "@/_components/LogOut";
 import Bars from "@/_components/Bars";
 import { isDev } from "./_utils/isDev";
+import { DateTime } from "luxon";
 
 const getCookie = async () => {
   try {
@@ -26,6 +27,8 @@ const getCookie = async () => {
 };
 
 const HomePage = async () => {
+  const now = DateTime.now();
+
   const cookie = await getCookie();
 
   if (!cookie?.id) {
@@ -48,7 +51,7 @@ const HomePage = async () => {
 
   const activities = [];
 
-  for (let i = 0; i < 1; i++) {
+  for (let i = 0; ; i++) {
     const activitesParams = {
       accessToken: accessTokenResponse.access_token,
       page: `${i + 1}`,
@@ -78,6 +81,14 @@ const HomePage = async () => {
         ),
       ),
     );
+
+    if (
+      activitiesResponse
+        .reverse()[0]
+        .start_date_local.startsWith(`${now.year - 2}-`)
+    ) {
+      break;
+    }
   }
 
   return (
