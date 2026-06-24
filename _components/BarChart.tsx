@@ -82,7 +82,7 @@ const BarChart = ({ title, data, tickInterval }: BarChartProps) => {
       .axisRight(yScale)
       .tickSize(0)
       .tickValues(d3.range(0, maxValue + tickInterval, tickInterval))
-      .tickFormat(d3.format("d"));
+      .tickFormat(d3.format(",d"));
     g.append("g")
       .attr("transform", `translate(${innerWidth}, 0)`)
       .call(yAxis)
@@ -175,7 +175,7 @@ const BarChart = ({ title, data, tickInterval }: BarChartProps) => {
         const interpolator = d3.interpolateRound(0, d.value);
 
         return function (time) {
-          this.textContent = interpolator(time) as unknown as string;
+          this.textContent = interpolator(time).toLocaleString();
         };
       });
 
