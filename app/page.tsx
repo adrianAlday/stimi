@@ -48,7 +48,7 @@ const HomePage = async () => {
 
   const activities = [];
 
-  for (let i = 0; i < 2; i++) {
+  for (let i = 0; i < 3; i++) {
     const activitesParams = {
       accessToken: accessTokenResponse.access_token,
       page: `${i + 1}`,
@@ -106,4 +106,5 @@ export default HomePage;
 // last column red/green if it meets ramp
 // load more button for more pages?
 // height dependent on data vs ticks?
-// or make ticks change to not be crammed?
+// or 280 height, make ticks change to not be crammed?
+// day target is time target divided by 90 rounded up?

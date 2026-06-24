@@ -1,6 +1,7 @@
 import { headers } from "next/headers";
 import Link from "next/link";
 import { isDev } from "../_utils/isDev";
+import Image from "next/image";
 
 const SignupPage = async () => {
   const resolvedHeaders = await headers();
@@ -9,7 +10,7 @@ const SignupPage = async () => {
 
   return (
     <main>
-      <button>
+      <div className="h-dvh flex items-center justify-center">
         <Link
           href={
             `http://www.strava.com/oauth/mobile/authorize?` +
@@ -19,10 +20,17 @@ const SignupPage = async () => {
             `&redirect_uri=http${isDev ? "" : "s"}://${host}/api/signup` +
             `&state=${referer}`
           }
+          className="relative size-[33dvw]"
         >
-          <div className="p-4">sign up</div>
+          <Image
+            src={"/connect.svg"}
+            alt={"connect"}
+            unoptimized={true}
+            preload={true}
+            fill
+          />
         </Link>
-      </button>
+      </div>
     </main>
   );
 };
