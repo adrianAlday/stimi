@@ -9,12 +9,11 @@ type Activity = {
 };
 
 type BarsProps = {
+  now: DateTime<true>;
   activities: Activity[];
 };
 
-const Bars = ({ activities }: BarsProps) => {
-  const now = DateTime.now();
-
+const Bars = ({ now, activities }: BarsProps) => {
   const filteredActivities = activities
     .filter((activity) => activity.sportType.includes("Run"))
     .sort((a, b) => a.startDateLocal.localeCompare(b.startDateLocal));
@@ -38,7 +37,6 @@ const Bars = ({ activities }: BarsProps) => {
   const firstWeek = DateTime.fromISO(
     processedActivities[0].startOfWeek || lastWeekString,
   );
-  // go back at least 8, 16 weeks?
   const lastWeek = DateTime.fromISO(lastWeekString);
   const weeks = [firstWeek];
   for (let i = 0; ; i++) {
