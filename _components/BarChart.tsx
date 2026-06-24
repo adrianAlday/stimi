@@ -4,12 +4,12 @@ import { useEffect, useRef } from "react";
 import * as d3 from "d3";
 
 type BarChartProps = {
-  data: { label: string; sublabel?: string; value: number }[];
   title: string;
+  data: { label: string; sublabel?: string; value: number }[];
   tickInterval: number;
 };
 
-const BarChart = ({ data, title, tickInterval }: BarChartProps) => {
+const BarChart = ({ title, data, tickInterval }: BarChartProps) => {
   const svgRef = useRef<SVGSVGElement | null>(null);
 
   const height =

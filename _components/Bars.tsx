@@ -87,7 +87,7 @@ const Bars = ({ activities }: BarsProps) => {
 
   return (
     <div className="pt-4 w-max">
-      <div className="my-4 inline sticky left-4 font-semibold">
+      <div className="my-4 px-4 inline sticky left-0 font-semibold">
         Last {groupedActivitiesEntries.length} weeks
       </div>
 
