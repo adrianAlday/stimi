@@ -90,7 +90,7 @@ const BarChart = ({ title, data, tickInterval }: BarChartProps) => {
       .call((g) =>
         g
           .selectAll("text")
-          .attr("fill", "rgb(255,255,255)")
+          .attr("fill", "rgba(255, 255, 255, 0.1)")
           .attr("font-size", "16px")
           .attr("font-weight", "100"),
       );
