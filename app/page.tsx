@@ -83,6 +83,7 @@ const HomePage = async () => {
     );
 
     if (
+      !activitiesResponse.length ||
       activitiesResponse
         .reverse()[0]
         .start_date_local.startsWith(`${now.year - 2}-`)
