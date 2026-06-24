@@ -57,8 +57,12 @@ const Bars = ({ now, activities }: BarsProps) => {
   const groupedActivitiesEntries = Object.entries(groupedActivities).sort(
     (a, b) => a[0].localeCompare(b[0]),
   );
+  const selectedGroups = groupedActivitiesEntries.slice(
+    groupedActivitiesEntries.length > 1 ? 1 : 0,
+  );
+  // keep only last week from 2 years ago?
   const getLabels = (week: string) => {
-    const date = DateTime.fromISO(week);
+    const date = DateTime.fromISO(week); // jsut store this higher up
     const label = date.toFormat("L/d");
     const [month, day] = label.split("/");
     const sublabel =
@@ -69,11 +73,11 @@ const Bars = ({ now, activities }: BarsProps) => {
       sublabel,
     };
   };
-  const daysData = groupedActivitiesEntries.map(([week, activities]) => ({
+  const daysData = selectedGroups.map(([week, activities]) => ({
     ...getLabels(week),
     value: new Set(activities.map((activity) => activity.date)).size,
   }));
-  const TimeData = groupedActivitiesEntries.map(([week, activities]) => ({
+  const TimeData = selectedGroups.map(([week, activities]) => ({
     ...getLabels(week),
     value: Math.floor(
       activities.reduce(
@@ -87,7 +91,7 @@ const Bars = ({ now, activities }: BarsProps) => {
     <div className="pt-4 w-max">
       <div className="my-4 px-4 inline sticky left-0 font-semibold">
         <span className={"font-black text-[rgb(252,82,0)] text-lg"}>STiMi</span>{" "}
-        - Last {groupedActivitiesEntries.length} weeks
+        - Last {selectedGroups.length} weeks
       </div>
 
       <BarChart data={daysData} title={"Days on"} tickInterval={1} />
