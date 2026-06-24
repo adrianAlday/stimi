@@ -98,7 +98,6 @@ const BarChart = ({ title, data, tickInterval }: BarChartProps) => {
     const yAxisGrid = d3
       .axisLeft(yScale)
       .tickSize(-innerWidth)
-      .tickFormat(() => "")
       .tickValues(d3.range(0, maxValue + tickInterval, tickInterval));
     g.append("g")
       .attr("class", "grid-lines")
@@ -184,7 +183,7 @@ const BarChart = ({ title, data, tickInterval }: BarChartProps) => {
       top: 0,
       behavior: "smooth",
     });
-  }, [data]);
+  }, []);
 
   return (
     <div className="my-4 px-4 w-max">
