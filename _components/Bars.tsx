@@ -86,16 +86,14 @@ const Bars = ({ activities }: BarsProps) => {
   }));
 
   return (
-    <div>
-      <div>
-        <BarChart data={daysData} title={"Days on / week"} tickInterval={1} />
-
-        <BarChart
-          data={TimeData}
-          title={"Moving time / week"}
-          tickInterval={60}
-        />
+    <div className="pt-4 w-max">
+      <div className="my-4 inline sticky left-4 font-semibold">
+        Last {groupedActivitiesEntries.length} weeks
       </div>
+
+      <BarChart data={daysData} title={"Days on"} tickInterval={1} />
+
+      <BarChart data={TimeData} title={"Moving time"} tickInterval={60} />
     </div>
   );
 };

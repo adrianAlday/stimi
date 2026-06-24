@@ -20,11 +20,9 @@ const BarChart = ({ data, title, tickInterval }: BarChartProps) => {
       );
   const width = 48 + 48 * data.length;
 
-  useEffect(() => {
-    const margin = { left: 0, top: 32, right: 48, bottom: 48 };
-    const innerWidth = width - margin.left - margin.right;
-    const innerHeight = height - margin.top - margin.bottom;
+  const margin = { left: 0, top: 32, right: 48, bottom: 48 };
 
+  useEffect(() => {
     if (!svgRef.current || data.length === 0) {
       return;
     }
@@ -36,6 +34,9 @@ const BarChart = ({ data, title, tickInterval }: BarChartProps) => {
     const g = svg
       .append("g")
       .attr("transform", `translate(${margin.left},${margin.top})`);
+
+    const innerWidth = width - margin.left - margin.right;
+    const innerHeight = height - margin.top - margin.bottom;
 
     const xScale = d3
       .scaleBand()
@@ -59,7 +60,8 @@ const BarChart = ({ data, title, tickInterval }: BarChartProps) => {
     xAxisGroup
       .selectAll("text")
       .style("text-anchor", "middle")
-      .attr("font-size", "16px");
+      .attr("font-size", "16px")
+      .attr("font-weight", "100");
     xAxisGroup.selectAll(".tick").each(function (labelString) {
       const dataPoint = data.find((d) => d.label === labelString);
 
@@ -68,8 +70,9 @@ const BarChart = ({ data, title, tickInterval }: BarChartProps) => {
           .append("text")
           .attr("y", 40)
           .style("text-anchor", "middle")
-          .attr("font-size", "16px")
           .attr("fill", "rgb(255,255,255)")
+          .attr("font-size", "16px")
+          .attr("font-weight", "600")
           .text(dataPoint.sublabel);
       }
     });
@@ -84,8 +87,9 @@ const BarChart = ({ data, title, tickInterval }: BarChartProps) => {
       .call((g) =>
         g
           .selectAll("text")
+          .attr("fill", "rgb(255,255,255)")
           .attr("font-size", "16px")
-          .attr("fill", "rgb(255,255,255)"),
+          .attr("font-weight", "100"),
       );
 
     const yAxisGrid = d3
@@ -154,8 +158,9 @@ const BarChart = ({ data, title, tickInterval }: BarChartProps) => {
       .attr("y", innerHeight)
       .attr("opacity", 0)
       .attr("text-anchor", "middle")
-      .attr("font-size", "16px")
       .attr("fill", "rgb(255,255,255)")
+      .attr("font-size", "16px")
+      .attr("font-weight", "600")
       .attr("pointer-events", "none")
       .transition()
       .duration(drawTransitionTime)
@@ -180,7 +185,7 @@ const BarChart = ({ data, title, tickInterval }: BarChartProps) => {
 
   return (
     <div className="my-4 px-4 w-max">
-      <div className="inline sticky left-4">{title}</div>
+      <div className="inline sticky left-4 font-semibold">{title}</div>
 
       <svg ref={svgRef} height={height} width={width} />
     </div>

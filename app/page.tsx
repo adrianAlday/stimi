@@ -48,7 +48,7 @@ const HomePage = async () => {
 
   const activities = [];
 
-  for (let i = 0; i < 3; i++) {
+  for (let i = 0; i < 1; i++) {
     const activitesParams = {
       accessToken: accessTokenResponse.access_token,
       page: `${i + 1}`,
@@ -84,7 +84,7 @@ const HomePage = async () => {
     <main>
       <Bars activities={activities} />
 
-      {isDev && <LogOut />}
+      {false && isDev && <LogOut />}
     </main>
   );
 };
