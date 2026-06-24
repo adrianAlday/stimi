@@ -62,7 +62,8 @@ const BarChart = ({ title, data, tickInterval }: BarChartProps) => {
       .selectAll("text")
       .style("text-anchor", "middle")
       .attr("font-size", "16px")
-      .attr("font-weight", "100");
+      .attr("font-weight", "300")
+      .attr("font-family", "Montserrat");
     xAxisGroup.selectAll(".tick").each(function (labelString) {
       const dataPoint = data.find((d) => d.label === labelString);
 
@@ -74,6 +75,7 @@ const BarChart = ({ title, data, tickInterval }: BarChartProps) => {
           .attr("fill", "rgb(255,255,255)")
           .attr("font-size", "16px")
           .attr("font-weight", "600")
+          .attr("font-family", "Montserrat")
           .text(dataPoint.sublabel);
       }
     });
@@ -92,7 +94,8 @@ const BarChart = ({ title, data, tickInterval }: BarChartProps) => {
           .selectAll("text")
           .attr("fill", "rgba(255, 255, 255, 0.1)")
           .attr("font-size", "16px")
-          .attr("font-weight", "100"),
+          .attr("font-weight", "300")
+          .attr("font-family", "Montserrat"),
       );
 
     const yAxisGrid = d3
