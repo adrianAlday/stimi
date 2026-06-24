@@ -93,7 +93,7 @@ const Bars = ({ activities }: BarsProps) => {
 
       <BarChart data={daysData} title={"Days on"} tickInterval={1} />
 
-      <BarChart data={TimeData} title={"Moving time"} tickInterval={60} />
+      <BarChart data={TimeData} title={"Minutes moving"} tickInterval={60} />
     </div>
   );
 };
