@@ -92,7 +92,7 @@ const HomePage = async () => {
 
   return (
     <main>
-      <div className="w-dvw h-dvh flex justify-center-safe">
+      <div className="w-dvw flex justify-center-safe">
         <Bars now={now} activities={activities} />
       </div>
     </main>

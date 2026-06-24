@@ -88,8 +88,8 @@ const Bars = ({ now, activities }: BarsProps) => {
   }));
 
   return (
-    <div className="pt-4 w-max">
-      <div className="my-4 px-4 inline sticky left-0 font-semibold">
+    <div className="w-max">
+      <div className="mt-4 px-4 inline-block sticky left-0 font-semibold">
         <span className={"font-black text-[rgb(252,82,0)] text-lg"}>STiMi</span>{" "}
         - Last {selectedGroups.length} weeks
       </div>
