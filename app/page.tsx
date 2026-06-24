@@ -1,9 +1,7 @@
 import { cookies, headers } from "next/headers";
 import { cookieName, verifyJwt } from "./_utils/cookies";
 import { redirect } from "next/navigation";
-import LogOut from "@/_components/LogOut";
 import Bars from "@/_components/Bars";
-import { isDev } from "./_utils/isDev";
 import { DateTime } from "luxon";
 
 const getCookie = async () => {
@@ -96,8 +94,6 @@ const HomePage = async () => {
     <main>
       <div className="w-dvw h-dvh flex justify-center-safe">
         <Bars now={now} activities={activities} />
-
-        {false && isDev && <LogOut />}
       </div>
     </main>
   );
@@ -122,3 +118,4 @@ export default HomePage;
 // height dependent on data vs ticks?
 // or 280 height, make ticks change to not be crammed?
 // day target is time target divided by 90 rounded up?
+// month and year dividing lines
