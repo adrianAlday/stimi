@@ -57,6 +57,7 @@ const BarChart = ({ data, title, tickInterval }: BarChartProps) => {
       .attr("transform", `translate(0,${innerHeight})`)
       .call(xAxis);
     xAxisGroup.selectAll(".tick line").remove();
+    xAxisGroup.select(".domain").remove();
     xAxisGroup
       .selectAll("text")
       .style("text-anchor", "middle")
@@ -79,11 +80,13 @@ const BarChart = ({ data, title, tickInterval }: BarChartProps) => {
 
     const yAxis = d3
       .axisRight(yScale)
+      .tickSize(0)
       .tickValues(d3.range(0, maxValue + tickInterval, tickInterval))
       .tickFormat(d3.format("d"));
     g.append("g")
       .attr("transform", `translate(${innerWidth}, 0)`)
       .call(yAxis)
+      .call((g) => g.select(".domain").remove())
       .call((g) =>
         g
           .selectAll("text")
