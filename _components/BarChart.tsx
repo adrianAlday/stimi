@@ -112,7 +112,7 @@ const BarChart = ({ title, data, tickInterval }: BarChartProps) => {
       );
 
     const drawTransitionTime = 700;
-    const drawTransitionDelay = 50;
+    const drawTransitionDelay = (2 * drawTransitionTime) / data.length;
 
     const defs = svg.append("defs");
     const gradient = defs
