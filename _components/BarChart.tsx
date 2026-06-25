@@ -176,7 +176,7 @@ const BarChart = ({
       .attr("y", (d) => yScale(d.value))
       .attr("width", xScale.bandwidth())
       .attr("height", (d) => innerHeight - yScale(d.value))
-      .attr("rx", 6)
+      .attr("rx", 8)
       .attr("fill", "url(#bar-gradient)")
       .attr("y", innerHeight)
       .attr("height", 0)
@@ -187,18 +187,18 @@ const BarChart = ({
       .attr("y", (d) => yScale(d.value))
       .attr("height", (d) => innerHeight - yScale(d.value));
 
-    const lineData = data.filter((d) => d.targetValue !== undefined);
+    const targetLineData = data.filter((d) => d.targetValue !== undefined);
 
-    if (lineData.length > 0) {
+    if (targetLineData.length > 0) {
       const lineGenerator = d3
-        .line<(typeof lineData)[0]>()
+        .line<(typeof targetLineData)[0]>()
         .x((d) => (xScale(d.labelValue) as number) + xScale.bandwidth() / 2)
         .y((d) => yScale(d.targetValue as number))
         .curve(d3.curveMonotoneX);
 
       const path = g
         .append("path")
-        .datum(lineData)
+        .datum(targetLineData)
         .attr("fill", "none")
         .attr("stroke", "rgb(89,165,29)")
         .attr("stroke-width", 2)
@@ -212,6 +212,37 @@ const BarChart = ({
         .duration(drawTransitionTime * 4)
         .ease(d3.easeCubicOut)
         .attr("stroke-dashoffset", 0);
+
+      const targetEnd = targetLineData[targetLineData.length - 1];
+      const targetEndX =
+        (xScale(targetEnd.labelValue) as number) + xScale.bandwidth() / 2 + 12;
+      const targetEndY = yScale(targetEnd.targetValue as number);
+
+      const labelGroup = g
+        .append("text")
+        .attr("opacity", 0)
+        .attr("font-size", "16px")
+        .attr("font-weight", "450")
+        .attr("font-family", "Montserrat")
+        .attr("fill", "rgb(89,165,29)");
+
+      labelGroup
+        .append("tspan")
+        .text("Target:")
+        .attr("x", targetEndX + 8)
+        .attr("y", targetEndY - 10);
+
+      labelGroup
+        .append("tspan")
+        .text(valueFormatter(targetEnd.targetValue as number))
+        .attr("x", targetEndX + 8)
+        .attr("y", targetEndY + 6);
+
+      labelGroup
+        .transition()
+        .delay(drawTransitionTime * 4)
+        .duration(drawTransitionTime)
+        .attr("opacity", 1);
     }
 
     g.selectAll(".value-label")
