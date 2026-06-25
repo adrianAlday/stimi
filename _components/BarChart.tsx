@@ -8,7 +8,7 @@ export type DataPoint = {
   label: string;
   sublabel?: string;
   value: number;
-  targetValue: number;
+  goalValue: number;
 };
 
 type BarChartProps = {
@@ -34,7 +34,7 @@ const BarChart = ({
       );
   const width = 48 + 48 * data.length;
 
-  const margin = { left: 0, top: 32, right: 56, bottom: 48 };
+  const margin = { left: 0, top: 32, right: 48, bottom: 48 };
 
   useEffect(() => {
     if (!svgRef.current || data.length === 0) {
@@ -59,7 +59,7 @@ const BarChart = ({
       .padding(20 / 100);
 
     const maxValue = Math.max(
-      ...data.map((d) => Math.max(d.value, d.targetValue)),
+      ...data.map((d) => Math.max(d.value, d.goalValue)),
     );
 
     const yScale = d3
@@ -154,7 +154,7 @@ const BarChart = ({
     // 1-2 bar sequential delay
     // 2-3 last bar draw
     // 3-4 finish line draw
-    // 4-5 target color change
+    // 4-5 goal color change
 
     const barDrawDelayUnit = (2 * timeUnit) / data.length;
 
@@ -228,17 +228,15 @@ const BarChart = ({
       .attr("y", (d) => yScale(d.value))
       .attr("height", (d) => innerHeight - yScale(d.value));
 
-    const targetLineData = data.filter((d) => d.targetValue !== undefined);
-
     const lineGenerator = d3
-      .line<(typeof targetLineData)[0]>()
+      .line<(typeof data)[0]>()
       .x((d) => (xScale(d.labelValue) as number) + xScale.bandwidth() / 2)
-      .y((d) => yScale(d.targetValue as number))
+      .y((d) => yScale(d.goalValue as number))
       .curve(d3.curveMonotoneX);
 
     const path = g
       .append("path")
-      .datum(targetLineData)
+      .datum(data)
       .attr("fill", "none")
       .attr("stroke", "rgb(15,157,88)")
       .attr("stroke-width", 3)
@@ -253,10 +251,10 @@ const BarChart = ({
       .ease(d3.easeCubicOut)
       .attr("stroke-dashoffset", 0);
 
-    const targetEnd = targetLineData[targetLineData.length - 1];
-    const targetEndX =
-      (xScale(targetEnd.labelValue) as number) + xScale.bandwidth() / 2 + 12;
-    const targetEndY = yScale(targetEnd.targetValue as number);
+    const goalEnd = data[data.length - 1];
+    const goalEndX =
+      (xScale(goalEnd.labelValue) as number) + xScale.bandwidth() / 2 + 12;
+    const goalEndY = yScale(goalEnd.goalValue as number);
 
     const labelGroup = g
       .append("text")
@@ -270,15 +268,15 @@ const BarChart = ({
 
     labelGroup
       .append("tspan")
-      .text("Target:")
-      .attr("x", targetEndX + 12)
-      .attr("y", targetEndY - labelHeightAboveBar - 20);
+      .text("Goal:")
+      .attr("x", goalEndX + 12)
+      .attr("y", goalEndY - labelHeightAboveBar - 20);
 
     labelGroup
       .append("tspan")
-      .text(valueFormatter(targetEnd.targetValue as number))
-      .attr("x", targetEndX + 12)
-      .attr("y", targetEndY - labelHeightAboveBar);
+      .text(valueFormatter(goalEnd.goalValue as number))
+      .attr("x", goalEndX + 12)
+      .attr("y", goalEndY - labelHeightAboveBar);
 
     labelGroup
       .transition()
@@ -319,14 +317,14 @@ const BarChart = ({
 
     const lastIndex = data.length - 1;
     const lastDataPoint = data[lastIndex];
-    const targetMet = lastDataPoint.value >= lastDataPoint.targetValue;
+    const goalMet = lastDataPoint.value >= lastDataPoint.goalValue;
 
     g.selectAll(".value-label")
       .filter((_d, index) => index === lastIndex)
       .transition()
       .delay(timeUnit * 4)
       .duration(timeUnit)
-      .attr("fill", targetMet ? "rgb(15,157,88)" : "rgb(219,68,55)");
+      .attr("fill", goalMet ? "rgb(15,157,88)" : "rgb(219,68,55)");
 
     g.selectAll(".bar")
       .filter((_d, index) => index === lastIndex)
@@ -335,7 +333,7 @@ const BarChart = ({
       .duration(timeUnit)
       .attr(
         "fill",
-        targetMet ? "url(#green-bar-gradient)" : "url(#red-bar-gradient)",
+        goalMet ? "url(#green-bar-gradient)" : "url(#red-bar-gradient)",
       );
 
     window.scrollTo({
