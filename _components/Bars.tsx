@@ -1,5 +1,5 @@
 import { DateTime } from "luxon";
-import BarChart from "./BarChart";
+import BarChart, { DataPoint } from "./BarChart";
 
 type Activity = {
   sportType: string;
@@ -73,23 +73,66 @@ const Bars = ({ now, activities }: BarsProps) => {
       sublabel,
     };
   };
-  const daysData = selectedGroups.map(([week, activities]) => ({
-    ...getLabels(week),
-    value: new Set(
-      activities.map(
-        (activity) => (activity as Activity & { date: string }).date,
+
+  const weeksToLookBack = 8;
+  const timeTargetRamp = 10;
+
+  const timeData = selectedGroups
+    .map(([week, activities]) => ({
+      ...getLabels(week),
+      value: Math.floor(
+        activities.reduce(
+          (accumulator, activity) => accumulator + activity.movingTime,
+          0,
+        ) / 60,
       ),
-    ).size,
-  }));
-  const timeData = selectedGroups.map(([week, activities]) => ({
-    ...getLabels(week),
-    value: Math.floor(
-      activities.reduce(
-        (accumulator, activity) => accumulator + activity.movingTime,
-        0,
-      ) / 60,
-    ),
-  }));
+    }))
+    .reduce((accumulator, week, index) => {
+      const previousWeeks = accumulator.toReversed().slice(0, weeksToLookBack);
+      const lastWeek = previousWeeks[0];
+
+      const targetValue =
+        index === 0
+          ? timeTargetRamp
+          : lastWeek.value >= lastWeek.targetValue
+            ? lastWeek.targetValue + timeTargetRamp
+            : previousWeeks.some(
+                  (previousWeek) =>
+                    previousWeek.value >= previousWeek.targetValue,
+                )
+              ? lastWeek.targetValue
+              : Math.max(lastWeek.targetValue - timeTargetRamp, timeTargetRamp);
+
+      return [...accumulator, { ...week, targetValue }];
+    }, [] as DataPoint[]);
+
+  const maximumRequestedTimePerDay = 90;
+  const minimumTargetDays = 2;
+  const maximumTargetDays = 7;
+
+  const daysData = selectedGroups
+    .map(([week, activities]) => ({
+      ...getLabels(week),
+      value: new Set(
+        activities.map(
+          (activity) => (activity as Activity & { date: string }).date,
+        ),
+      ).size,
+    }))
+    .map((week, index) => {
+      const targetValue = Math.min(
+        Math.max(
+          Math.ceil(timeData[index].targetValue / maximumRequestedTimePerDay),
+          minimumTargetDays,
+        ),
+        maximumTargetDays,
+      );
+
+      return {
+        ...week,
+        targetValue,
+      };
+    });
 
   return (
     <div className="w-max">

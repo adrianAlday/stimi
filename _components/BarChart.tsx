@@ -3,14 +3,17 @@
 import { useEffect, useRef } from "react";
 import * as d3 from "d3";
 
+export type DataPoint = {
+  labelValue: string;
+  label: string;
+  sublabel?: string;
+  value: number;
+  targetValue: number;
+};
+
 type BarChartProps = {
   title: string;
-  data: {
-    labelValue: string;
-    label: string;
-    sublabel?: string;
-    value: number;
-  }[];
+  data: DataPoint[];
   tickInterval: number;
   valueFormatterType?: string;
 };
@@ -55,7 +58,9 @@ const BarChart = ({
       .range([0, innerWidth])
       .padding(20 / 100);
 
-    const maxValue = d3.max(data, (d) => d.value) ?? 0;
+    const maxValue = Math.max(
+      ...data.map((d) => Math.max(d.value, d.targetValue)),
+    );
 
     const yScale = d3
       .scaleLinear()
@@ -212,6 +217,33 @@ const BarChart = ({
           this.textContent = valueFormatter(interpolator(time));
         };
       });
+
+    const lineData = data.filter((d) => d.targetValue !== undefined);
+
+    if (lineData.length > 0) {
+      const lineGenerator = d3
+        .line<(typeof lineData)[0]>()
+        .x((d) => (xScale(d.labelValue) as number) + xScale.bandwidth() / 2)
+        .y((d) => yScale(d.targetValue as number))
+        .curve(d3.curveMonotoneX);
+
+      const path = g
+        .append("path")
+        .datum(lineData)
+        .attr("fill", "none")
+        .attr("stroke", "rgb(89,165,29)")
+        .attr("stroke-width", 2)
+        .attr("d", lineGenerator);
+
+      const totalLength = (path.node() as SVGPathElement).getTotalLength();
+      path
+        .attr("stroke-dasharray", totalLength + " " + totalLength)
+        .attr("stroke-dashoffset", totalLength)
+        .transition()
+        .duration(drawTransitionTime * 4)
+        .ease(d3.easeCubicOut)
+        .attr("stroke-dashoffset", 0);
+    }
 
     window.scrollTo({
       left: document.documentElement.scrollWidth,
