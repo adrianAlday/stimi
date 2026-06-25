@@ -34,7 +34,7 @@ const BarChart = ({
       );
   const width = 48 + 48 * data.length;
 
-  const margin = { left: 0, top: 32, right: 48, bottom: 48 };
+  const margin = { left: 0, top: 32, right: 56, bottom: 48 };
 
   useEffect(() => {
     if (!svgRef.current || data.length === 0) {
@@ -221,21 +221,23 @@ const BarChart = ({
       .append("text")
       .attr("opacity", 0)
       .attr("font-size", "16px")
-      .attr("font-weight", "450")
+      .attr("font-weight", "600")
       .attr("font-family", "Montserrat")
       .attr("fill", "rgb(15,157,88)");
+
+    const labelHeightAboveBar = 8;
 
     labelGroup
       .append("tspan")
       .text("Target:")
-      .attr("x", targetEndX + 8)
-      .attr("y", targetEndY - 10);
+      .attr("x", targetEndX + 12)
+      .attr("y", targetEndY - labelHeightAboveBar - 20);
 
     labelGroup
       .append("tspan")
       .text(valueFormatter(targetEnd.targetValue as number))
-      .attr("x", targetEndX + 8)
-      .attr("y", targetEndY + 6);
+      .attr("x", targetEndX + 12)
+      .attr("y", targetEndY - labelHeightAboveBar);
 
     labelGroup
       .transition()
@@ -264,7 +266,7 @@ const BarChart = ({
       .duration(drawTransitionTime)
       .ease(d3.easeCubicOut)
       .delay((_d, index) => index * drawTransitionDelay)
-      .attr("y", (d) => yScale(d.value) - 8)
+      .attr("y", (d) => yScale(d.value) - labelHeightAboveBar)
       .attr("opacity", 1)
       .tween("text", (d) => {
         const interpolator = d3.interpolateRound(0, d.value);
@@ -273,6 +275,19 @@ const BarChart = ({
           this.textContent = valueFormatter(interpolator(time));
         };
       });
+
+    const lastDataPoint = data[data.length - 1];
+    g.selectAll(".value-label")
+      .filter((_d, index) => index === data.length - 1)
+      .transition()
+      .delay(drawTransitionTime * 4)
+      .duration(drawTransitionTime)
+      .attr(
+        "fill",
+        lastDataPoint.value >= lastDataPoint.targetValue
+          ? "rgb(15,157,88)"
+          : "rgb(219,68,55)",
+      );
 
     window.scrollTo({
       left: document.documentElement.scrollWidth,
