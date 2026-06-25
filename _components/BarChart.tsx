@@ -147,25 +147,65 @@ const BarChart = ({
           .attr("stroke-dasharray", "4,4"),
       );
 
-    const drawTransitionTime = 700;
-    const drawTransitionDelay = (2 * drawTransitionTime) / data.length;
+    const timeUnit = 700;
+    // time chunks
+    // 0-1 bar sequential delay
+    // 1-2 bar sequential delay
+    // 2-3 last bar draw
+    // 3-4 finish line draw
+    // 4-5 target color change
+
+    const barDrawDelayUnit = (2 * timeUnit) / data.length;
 
     const defs = svg.append("defs");
-    const gradient = defs
+
+    const orangeBarGradient = defs
       .append("linearGradient")
-      .attr("id", "bar-gradient")
+      .attr("id", "orange-bar-gradient")
       .attr("x1", "0%")
       .attr("y1", "100%")
       .attr("x2", "0%")
       .attr("y2", "0%");
-    gradient
+    orangeBarGradient
       .append("stop")
       .attr("offset", "0%")
       .attr("stop-color", "rgba(252, 82, 0, 0.33)");
-    gradient
+    orangeBarGradient
       .append("stop")
       .attr("offset", "100%")
       .attr("stop-color", "rgba(252, 82, 0, 1.0)");
+
+    const redBarGradient = defs
+      .append("linearGradient")
+      .attr("id", "red-bar-gradient")
+      .attr("x1", "0%")
+      .attr("y1", "100%")
+      .attr("x2", "0%")
+      .attr("y2", "0%");
+    redBarGradient
+      .append("stop")
+      .attr("offset", "0%")
+      .attr("stop-color", "rgba(219,68,55, 0.33)");
+    redBarGradient
+      .append("stop")
+      .attr("offset", "100%")
+      .attr("stop-color", "rgba(219,68,55, 1.0)");
+
+    const greenBarGradient = defs
+      .append("linearGradient")
+      .attr("id", "green-bar-gradient")
+      .attr("x1", "0%")
+      .attr("y1", "100%")
+      .attr("x2", "0%")
+      .attr("y2", "0%");
+    greenBarGradient
+      .append("stop")
+      .attr("offset", "0%")
+      .attr("stop-color", "rgba(15,157,88, 0.33)");
+    greenBarGradient
+      .append("stop")
+      .attr("offset", "100%")
+      .attr("stop-color", "rgba(15,157,88, 1.0)");
 
     g.selectAll(".bar")
       .data(data)
@@ -177,13 +217,13 @@ const BarChart = ({
       .attr("width", xScale.bandwidth())
       .attr("height", (d) => innerHeight - yScale(d.value))
       .attr("rx", 8)
-      .attr("fill", "url(#bar-gradient)")
+      .attr("fill", "url(#orange-bar-gradient)")
       .attr("y", innerHeight)
       .attr("height", 0)
       .transition()
-      .duration(drawTransitionTime)
+      .duration(timeUnit)
       .ease(d3.easeCubicOut)
-      .delay((_d, index) => index * drawTransitionDelay)
+      .delay((_d, index) => index * barDrawDelayUnit)
       .attr("y", (d) => yScale(d.value))
       .attr("height", (d) => innerHeight - yScale(d.value));
 
@@ -208,7 +248,7 @@ const BarChart = ({
       .attr("stroke-dasharray", totalLength + " " + totalLength)
       .attr("stroke-dashoffset", totalLength)
       .transition()
-      .duration(drawTransitionTime * 4)
+      .duration(timeUnit * 4)
       .ease(d3.easeCubicOut)
       .attr("stroke-dashoffset", 0);
 
@@ -241,8 +281,8 @@ const BarChart = ({
 
     labelGroup
       .transition()
-      .delay(drawTransitionTime * 4)
-      .duration(drawTransitionTime)
+      .delay(timeUnit * 4)
+      .duration(timeUnit)
       .attr("opacity", 1);
 
     g.selectAll(".value-label")
@@ -263,9 +303,9 @@ const BarChart = ({
       .attr("font-weight", "600")
       .attr("pointer-events", "none")
       .transition()
-      .duration(drawTransitionTime)
+      .duration(timeUnit)
       .ease(d3.easeCubicOut)
-      .delay((_d, index) => index * drawTransitionDelay)
+      .delay((_d, index) => index * barDrawDelayUnit)
       .attr("y", (d) => yScale(d.value) - labelHeightAboveBar)
       .attr("opacity", 1)
       .tween("text", (d) => {
@@ -276,17 +316,25 @@ const BarChart = ({
         };
       });
 
-    const lastDataPoint = data[data.length - 1];
+    const lastIndex = data.length - 1;
+    const lastDataPoint = data[lastIndex];
+    const targetMet = lastDataPoint.value >= lastDataPoint.targetValue;
+
     g.selectAll(".value-label")
-      .filter((_d, index) => index === data.length - 1)
+      .filter((_d, index) => index === lastIndex)
       .transition()
-      .delay(drawTransitionTime * 4)
-      .duration(drawTransitionTime)
+      .delay(timeUnit * 4)
+      .duration(timeUnit)
+      .attr("fill", targetMet ? "rgb(15,157,88)" : "rgb(219,68,55)");
+
+    g.selectAll(".bar")
+      .filter((_d, index) => index === lastIndex)
+      .transition()
+      .delay(timeUnit * 4)
+      .duration(timeUnit)
       .attr(
         "fill",
-        lastDataPoint.value >= lastDataPoint.targetValue
-          ? "rgb(15,157,88)"
-          : "rgb(219,68,55)",
+        targetMet ? "url(#green-bar-gradient)" : "url(#red-bar-gradient)",
       );
 
     window.scrollTo({
