@@ -240,6 +240,7 @@ const BarChart = ({
       .attr("fill", "none")
       .attr("stroke", "rgb(15,157,88)")
       .attr("stroke-width", 3)
+      .attr("stroke-linecap", "round")
       .attr("d", lineGenerator);
 
     const totalLength = (path.node() as SVGPathElement).getTotalLength();
