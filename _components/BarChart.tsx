@@ -143,6 +143,7 @@ const BarChart = ({
       .call((g) =>
         g
           .selectAll(".tick line")
+          .attr("stroke-width", 1)
           .attr("stroke", "rgba(255, 255, 255, 0.1)")
           .attr("stroke-dasharray", "4,4"),
       );
@@ -240,7 +241,7 @@ const BarChart = ({
       .datum(targetLineData)
       .attr("fill", "none")
       .attr("stroke", "rgb(15,157,88)")
-      .attr("stroke-width", 2)
+      .attr("stroke-width", 3)
       .attr("d", lineGenerator);
 
     const totalLength = (path.node() as SVGPathElement).getTotalLength();
