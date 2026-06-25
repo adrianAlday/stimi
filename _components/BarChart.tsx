@@ -187,6 +187,33 @@ const BarChart = ({
       .attr("y", (d) => yScale(d.value))
       .attr("height", (d) => innerHeight - yScale(d.value));
 
+    const lineData = data.filter((d) => d.targetValue !== undefined);
+
+    if (lineData.length > 0) {
+      const lineGenerator = d3
+        .line<(typeof lineData)[0]>()
+        .x((d) => (xScale(d.labelValue) as number) + xScale.bandwidth() / 2)
+        .y((d) => yScale(d.targetValue as number))
+        .curve(d3.curveMonotoneX);
+
+      const path = g
+        .append("path")
+        .datum(lineData)
+        .attr("fill", "none")
+        .attr("stroke", "rgb(89,165,29)")
+        .attr("stroke-width", 2)
+        .attr("d", lineGenerator);
+
+      const totalLength = (path.node() as SVGPathElement).getTotalLength();
+      path
+        .attr("stroke-dasharray", totalLength + " " + totalLength)
+        .attr("stroke-dashoffset", totalLength)
+        .transition()
+        .duration(drawTransitionTime * 4)
+        .ease(d3.easeCubicOut)
+        .attr("stroke-dashoffset", 0);
+    }
+
     g.selectAll(".value-label")
       .data(data)
       .enter()
@@ -217,33 +244,6 @@ const BarChart = ({
           this.textContent = valueFormatter(interpolator(time));
         };
       });
-
-    const lineData = data.filter((d) => d.targetValue !== undefined);
-
-    if (lineData.length > 0) {
-      const lineGenerator = d3
-        .line<(typeof lineData)[0]>()
-        .x((d) => (xScale(d.labelValue) as number) + xScale.bandwidth() / 2)
-        .y((d) => yScale(d.targetValue as number))
-        .curve(d3.curveMonotoneX);
-
-      const path = g
-        .append("path")
-        .datum(lineData)
-        .attr("fill", "none")
-        .attr("stroke", "rgb(89,165,29)")
-        .attr("stroke-width", 2)
-        .attr("d", lineGenerator);
-
-      const totalLength = (path.node() as SVGPathElement).getTotalLength();
-      path
-        .attr("stroke-dasharray", totalLength + " " + totalLength)
-        .attr("stroke-dashoffset", totalLength)
-        .transition()
-        .duration(drawTransitionTime * 4)
-        .ease(d3.easeCubicOut)
-        .attr("stroke-dashoffset", 0);
-    }
 
     window.scrollTo({
       left: document.documentElement.scrollWidth,
