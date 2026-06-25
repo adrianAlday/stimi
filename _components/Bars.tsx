@@ -4,7 +4,6 @@ import BarChart from "./BarChart";
 type Activity = {
   sportType: string;
   startDateLocal: string;
-  date: string;
   movingTime: number;
 };
 
@@ -62,22 +61,27 @@ const Bars = ({ now, activities }: BarsProps) => {
   );
   // keep only last week from 2 years ago?
   const getLabels = (week: string) => {
-    const date = DateTime.fromISO(week); // jsut store this higher up
+    const date = DateTime.fromISO(week);
     const label = date.toFormat("L/d");
     const [month, day] = label.split("/");
     const sublabel =
       month === "1" && Number(day) <= 7 ? date.toFormat("yyyy") : undefined;
 
     return {
+      labelValue: week,
       label,
       sublabel,
     };
   };
   const daysData = selectedGroups.map(([week, activities]) => ({
     ...getLabels(week),
-    value: new Set(activities.map((activity) => activity.date)).size,
+    value: new Set(
+      activities.map(
+        (activity) => (activity as Activity & { date: string }).date,
+      ),
+    ).size,
   }));
-  const TimeData = selectedGroups.map(([week, activities]) => ({
+  const timeData = selectedGroups.map(([week, activities]) => ({
     ...getLabels(week),
     value: Math.floor(
       activities.reduce(
@@ -110,7 +114,12 @@ const Bars = ({ now, activities }: BarsProps) => {
 
       <BarChart data={daysData} title={"Days on"} tickInterval={1} />
 
-      <BarChart data={TimeData} title={"Minutes moving"} tickInterval={60} />
+      <BarChart
+        data={timeData}
+        title={"Time moving"}
+        tickInterval={60}
+        valueFormatterType={"toHoursAndMinutes"}
+      />
     </div>
   );
 };

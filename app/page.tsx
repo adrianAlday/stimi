@@ -119,3 +119,4 @@ export default HomePage;
 // or 280 height, make ticks change to not be crammed?
 // day target is time target divided by 90 rounded up?
 // month and year dividing lines
+// make bars go to that week on strava?

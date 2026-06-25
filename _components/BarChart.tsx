@@ -5,11 +5,22 @@ import * as d3 from "d3";
 
 type BarChartProps = {
   title: string;
-  data: { label: string; sublabel?: string; value: number }[];
+  data: {
+    labelValue: string;
+    label: string;
+    sublabel?: string;
+    value: number;
+  }[];
   tickInterval: number;
+  valueFormatterType?: string;
 };
 
-const BarChart = ({ title, data, tickInterval }: BarChartProps) => {
+const BarChart = ({
+  title,
+  data,
+  tickInterval,
+  valueFormatterType,
+}: BarChartProps) => {
   const svgRef = useRef<SVGSVGElement | null>(null);
 
   const height =
@@ -40,7 +51,7 @@ const BarChart = ({ title, data, tickInterval }: BarChartProps) => {
 
     const xScale = d3
       .scaleBand()
-      .domain(data.map((d) => d.label))
+      .domain(data.map((d) => d.labelValue))
       .range([0, innerWidth])
       .padding(20 / 100);
 
@@ -51,7 +62,15 @@ const BarChart = ({ title, data, tickInterval }: BarChartProps) => {
       .domain([0, Math.min(Math.ceil(maxValue / tickInterval) * tickInterval)])
       .range([innerHeight, 0]);
 
-    const xAxis = d3.axisBottom(xScale).tickSizeOuter(0);
+    const xAxis = d3
+      .axisBottom(xScale)
+      .tickSizeOuter(0)
+      .tickFormat((labelValue) => {
+        const dataPoint = data.find((d) => d.labelValue === labelValue);
+
+        return dataPoint ? dataPoint.label : labelValue;
+      });
+
     const xAxisGroup = g
       .append("g")
       .attr("transform", `translate(0,${innerHeight})`)
@@ -80,11 +99,21 @@ const BarChart = ({ title, data, tickInterval }: BarChartProps) => {
       }
     });
 
+    const valueFormatter =
+      valueFormatterType === "toHoursAndMinutes"
+        ? (value: number) => {
+            const hours = Math.floor(value / 60);
+            const minutes = Math.floor(value % 60);
+
+            return `${hours}:${minutes.toString().padStart(2, "0")}`;
+          }
+        : (value: number) => value.toLocaleString();
+
     const yAxis = d3
       .axisRight(yScale)
       .tickSize(0)
       .tickValues(d3.range(0, maxValue + tickInterval, tickInterval))
-      .tickFormat(d3.format(",d"));
+      .tickFormat((d) => valueFormatter(Number(d)));
     g.append("g")
       .attr("transform", `translate(${innerWidth}, 0)`)
       .call(yAxis)
@@ -138,7 +167,7 @@ const BarChart = ({ title, data, tickInterval }: BarChartProps) => {
       .enter()
       .append("rect")
       .attr("class", "bar")
-      .attr("x", (d) => xScale(d.label) as number)
+      .attr("x", (d) => xScale(d.labelValue) as number)
       .attr("y", (d) => yScale(d.value))
       .attr("width", xScale.bandwidth())
       .attr("height", (d) => innerHeight - yScale(d.value))
@@ -159,7 +188,10 @@ const BarChart = ({ title, data, tickInterval }: BarChartProps) => {
       .append("text")
       .attr("class", "value-label")
       .text(0)
-      .attr("x", (d) => (xScale(d.label) as number) + xScale.bandwidth() / 2)
+      .attr(
+        "x",
+        (d) => (xScale(d.labelValue) as number) + xScale.bandwidth() / 2,
+      )
       .attr("y", innerHeight)
       .attr("opacity", 0)
       .attr("text-anchor", "middle")
@@ -177,7 +209,7 @@ const BarChart = ({ title, data, tickInterval }: BarChartProps) => {
         const interpolator = d3.interpolateRound(0, d.value);
 
         return function (time) {
-          this.textContent = interpolator(time).toLocaleString();
+          this.textContent = valueFormatter(interpolator(time));
         };
       });
 
