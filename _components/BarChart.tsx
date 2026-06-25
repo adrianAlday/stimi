@@ -6,7 +6,6 @@ import * as d3 from "d3";
 export type DataPoint = {
   labelValue: string;
   label: string;
-  sublabel?: string;
   value: number;
   goalValue: number;
 };
@@ -16,6 +15,7 @@ type BarChartProps = {
   data: DataPoint[];
   tickInterval: number;
   valueFormatterType?: string;
+  years: [string, number][];
 };
 
 const BarChart = ({
@@ -23,6 +23,7 @@ const BarChart = ({
   data,
   tickInterval,
   valueFormatterType,
+  years,
 }: BarChartProps) => {
   const svgRef = useRef<SVGSVGElement | null>(null);
 
@@ -32,9 +33,11 @@ const BarChart = ({
       Math.ceil(
         Math.max(...data.map((dataPoint) => dataPoint.value)) / tickInterval,
       );
-  const width = 48 + 48 * data.length;
+  const columnWidth = 48;
+  const yearsColumnWidth = 47.91;
+  const width = 48 + columnWidth * data.length;
 
-  const margin = { left: 0, top: 32, right: 48, bottom: 48 };
+  const margin = { left: 0, top: 32, right: 48, bottom: 24 };
 
   useEffect(() => {
     if (!svgRef.current || data.length === 0) {
@@ -89,21 +92,6 @@ const BarChart = ({
       .attr("font-size", "16px")
       .attr("font-weight", "600")
       .attr("font-family", "Montserrat");
-    xAxisGroup.selectAll(".tick").each(function (labelValue) {
-      const dataPoint = data.find((d) => d.labelValue === labelValue);
-
-      if (dataPoint?.sublabel) {
-        d3.select(this)
-          .append("text")
-          .attr("y", 40)
-          .style("text-anchor", "middle")
-          .attr("fill", "rgb(255,255,255)")
-          .attr("font-size", "16px")
-          .attr("font-weight", "600")
-          .attr("font-family", "Montserrat")
-          .text(dataPoint.sublabel);
-      }
-    });
 
     const valueFormatter =
       valueFormatterType === "toHoursAndMinutes"
@@ -350,6 +338,22 @@ const BarChart = ({
       <div className="inline-block sticky left-4 font-semibold">{title}</div>
 
       <svg ref={svgRef} height={height} width={width} />
+
+      <div
+        className="flex opacity-33"
+        style={{
+          marginLeft: margin.left + 8,
+          width: yearsColumnWidth * data.length,
+        }}
+      >
+        {years.map(([year, count]) => (
+          <div key={year} style={{ width: yearsColumnWidth * count }}>
+            <div className="inline-block sticky left-4 pr-4 font-semibold">
+              {year}
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 };

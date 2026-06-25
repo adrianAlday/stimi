@@ -61,28 +61,31 @@ const Bars = ({ now, activities }: BarsProps) => {
     .reverse()
     .slice(0, 106)
     .reverse();
-  const getLabels = (week: string, index: number) => {
-    const date = DateTime.fromISO(week);
-    const label = date.toFormat("L/d");
-    const [month, day] = label.split("/");
-    const sublabel =
-      index === 0 || (month === "1" && Number(day) <= 7)
-        ? date.toFormat("yyyy")
-        : undefined;
 
-    return {
-      labelValue: week,
-      label,
-      sublabel,
-    };
-  };
+  const years = Object.entries(
+    selectedGroups.reduce(
+      (accumulator, element) => {
+        const week = element[0].split("-")[0];
+
+        accumulator[week] = accumulator[week] ? accumulator[week] + 1 : 1;
+
+        return accumulator;
+      },
+      {} as { [key: string]: number },
+    ),
+  );
+
+  const getLabels = (week: string) => ({
+    labelValue: week,
+    label: DateTime.fromISO(week).toFormat("L/d"),
+  });
 
   const weeksToLookBack = 2;
   const timeGoalRamp = 10;
 
   const timeData = selectedGroups
-    .map(([week, activities], index) => ({
-      ...getLabels(week, index),
+    .map(([week, activities]) => ({
+      ...getLabels(week),
       value: Math.floor(
         activities.reduce(
           (accumulator, activity) => accumulator + activity.movingTime,
@@ -113,8 +116,8 @@ const Bars = ({ now, activities }: BarsProps) => {
   const maximumDaysGoal = 7;
 
   const daysData = selectedGroups
-    .map(([week, activities], index) => ({
-      ...getLabels(week, index),
+    .map(([week, activities]) => ({
+      ...getLabels(week),
       value: new Set(
         activities.map(
           (activity) => (activity as Activity & { date: string }).date,
@@ -157,13 +160,19 @@ const Bars = ({ now, activities }: BarsProps) => {
         </div>
       </div>
 
-      <BarChart data={daysData} title={"Days on"} tickInterval={1} />
+      <BarChart
+        data={daysData}
+        title={"Days on"}
+        tickInterval={1}
+        years={years}
+      />
 
       <BarChart
         data={timeData}
         title={"Time moving"}
         tickInterval={60}
         valueFormatterType={"toHoursAndMinutes"}
+        years={years}
       />
     </div>
   );
