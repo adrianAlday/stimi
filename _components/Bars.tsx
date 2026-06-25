@@ -75,7 +75,7 @@ const Bars = ({ now, activities }: BarsProps) => {
     };
   };
 
-  const weeksToLookBack = 8;
+  const weeksToLookBack = 2;
   const timeTargetRamp = 10;
 
   const timeData = selectedGroups
@@ -97,12 +97,12 @@ const Bars = ({ now, activities }: BarsProps) => {
           ? timeTargetRamp
           : lastWeek.value >= lastWeek.targetValue
             ? lastWeek.targetValue + timeTargetRamp
-            : previousWeeks.some(
+            : previousWeeks.every(
                   (previousWeek) =>
-                    previousWeek.value >= previousWeek.targetValue,
+                    previousWeek.value < previousWeek.targetValue,
                 )
-              ? lastWeek.targetValue
-              : Math.max(lastWeek.targetValue - timeTargetRamp, timeTargetRamp);
+              ? Math.max(lastWeek.targetValue - timeTargetRamp, timeTargetRamp)
+              : lastWeek.targetValue;
 
       return [...accumulator, { ...week, targetValue }];
     }, [] as DataPoint[]);
