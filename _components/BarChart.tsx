@@ -83,8 +83,8 @@ const BarChart = ({
       .attr("font-size", "16px")
       .attr("font-weight", "300")
       .attr("font-family", "Montserrat");
-    xAxisGroup.selectAll(".tick").each(function (labelString) {
-      const dataPoint = data.find((d) => d.label === labelString);
+    xAxisGroup.selectAll(".tick").each(function (labelValue) {
+      const dataPoint = data.find((d) => d.labelValue === labelValue);
 
       if (dataPoint?.sublabel) {
         d3.select(this)
