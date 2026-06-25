@@ -123,3 +123,9 @@ export default HomePage;
 // make bars go to that week on strava?
 // filter for after a specific date?
 // keep only last week from 2 years ago?
+// routing so that url goes to specific athlete
+// allow user to toggle making page public
+// fetch and save data
+// refetch on what cadence? one page? webhooks?
+// allow admin power
+// demo page with my data
