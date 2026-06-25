@@ -59,13 +59,14 @@ const Bars = ({ now, activities }: BarsProps) => {
   const selectedGroups = groupedActivitiesEntries.slice(
     groupedActivitiesEntries.length > 1 ? 1 : 0,
   );
-  // keep only last week from 2 years ago?
-  const getLabels = (week: string) => {
+  const getLabels = (week: string, index: number) => {
     const date = DateTime.fromISO(week);
     const label = date.toFormat("L/d");
     const [month, day] = label.split("/");
     const sublabel =
-      month === "1" && Number(day) <= 7 ? date.toFormat("yyyy") : undefined;
+      index === 0 || (month === "1" && Number(day) <= 7)
+        ? date.toFormat("yyyy")
+        : undefined;
 
     return {
       labelValue: week,
@@ -78,8 +79,8 @@ const Bars = ({ now, activities }: BarsProps) => {
   const timeTargetRamp = 10;
 
   const timeData = selectedGroups
-    .map(([week, activities]) => ({
-      ...getLabels(week),
+    .map(([week, activities], index) => ({
+      ...getLabels(week, index),
       value: Math.floor(
         activities.reduce(
           (accumulator, activity) => accumulator + activity.movingTime,
@@ -111,8 +112,8 @@ const Bars = ({ now, activities }: BarsProps) => {
   const maximumTargetDays = 7;
 
   const daysData = selectedGroups
-    .map(([week, activities]) => ({
-      ...getLabels(week),
+    .map(([week, activities], index) => ({
+      ...getLabels(week, index),
       value: new Set(
         activities.map(
           (activity) => (activity as Activity & { date: string }).date,

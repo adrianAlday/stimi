@@ -49,6 +49,8 @@ const HomePage = async () => {
 
   const activities = [];
 
+  const targetLookBackDate = now.minus({ months: 25 });
+
   for (let i = 0; ; i++) {
     const activitesParams = {
       accessToken: accessTokenResponse.access_token,
@@ -82,9 +84,8 @@ const HomePage = async () => {
 
     if (
       !activitiesResponse.length ||
-      activitiesResponse
-        .reverse()[0]
-        .start_date_local.startsWith(`${now.year - 2}-`)
+      DateTime.fromISO(activitiesResponse.reverse()[0].start_date_local) <
+        targetLookBackDate
     ) {
       break;
     }
@@ -120,3 +121,5 @@ export default HomePage;
 // day target is time target divided by 90 rounded up?
 // month and year dividing lines
 // make bars go to that week on strava?
+// filter for after a specific date?
+// keep only last week from 2 years ago?
