@@ -85,8 +85,9 @@ const BarChart = ({
     xAxisGroup
       .selectAll("text")
       .style("text-anchor", "middle")
+      .attr("fill", "rgba(255,255,255,0.33)")
       .attr("font-size", "16px")
-      .attr("font-weight", "300")
+      .attr("font-weight", "600")
       .attr("font-family", "Montserrat");
     xAxisGroup.selectAll(".tick").each(function (labelValue) {
       const dataPoint = data.find((d) => d.labelValue === labelValue);
