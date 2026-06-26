@@ -15,7 +15,6 @@ type BarChartProps = {
   data: DataPoint[];
   tickInterval: number;
   valueFormatterType?: string;
-  years: [string, number][];
 };
 
 const BarChart = ({
@@ -23,7 +22,6 @@ const BarChart = ({
   data,
   tickInterval,
   valueFormatterType,
-  years,
 }: BarChartProps) => {
   const svgRef = useRef<SVGSVGElement | null>(null);
 
@@ -34,10 +32,9 @@ const BarChart = ({
         Math.max(...data.map((dataPoint) => dataPoint.value)) / tickInterval,
       );
   const columnWidth = 48;
-  const yearsColumnWidth = 47.91;
   const width = 48 + columnWidth * data.length;
 
-  const margin = { left: 0, top: 32, right: 48, bottom: 24 };
+  const margin = { left: 0, top: 32, right: 48, bottom: 8 };
 
   useEffect(() => {
     if (!svgRef.current || data.length === 0) {
@@ -73,12 +70,7 @@ const BarChart = ({
     const xAxis = d3
       .axisBottom(xScale)
       .tickSizeOuter(0)
-      .tickFormat((labelValue) => {
-        const dataPoint = data.find((d) => d.labelValue === labelValue);
-
-        return dataPoint ? dataPoint.label : labelValue;
-      });
-
+      .tickFormat(() => "");
     const xAxisGroup = g
       .append("g")
       .attr("transform", `translate(0,${innerHeight})`)
@@ -336,22 +328,6 @@ const BarChart = ({
       <div className="inline-block sticky left-4 font-semibold">{title}</div>
 
       <svg ref={svgRef} height={height} width={width} />
-
-      <div
-        className="flex opacity-33"
-        style={{
-          marginLeft: margin.left + 8,
-          width: yearsColumnWidth * data.length,
-        }}
-      >
-        {years.map(([year, count]) => (
-          <div key={year} style={{ width: yearsColumnWidth * count }}>
-            <div className="inline-block sticky left-4 pr-4 font-semibold">
-              {year}
-            </div>
-          </div>
-        ))}
-      </div>
     </div>
   );
 };
