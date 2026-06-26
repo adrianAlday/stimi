@@ -208,20 +208,21 @@ const Bars = ({ now, activities }: BarsProps) => {
           </div>
         </div>
 
-        <BarChart
-          data={daysData}
-          title={"Days on"}
-          tickInterval={1}
-          scrollId={scrollId}
-        />
-
-        <BarChart
-          data={timeData}
-          title={"Time moving"}
-          tickInterval={60}
-          valueFormatterType={"toHoursAndMinutes"}
-          scrollId={scrollId}
-        />
+        <div className="pb-2">
+          <BarChart
+            data={daysData}
+            title={"Days on"}
+            tickInterval={1}
+            scrollId={scrollId}
+          />
+          <BarChart
+            data={timeData}
+            title={"Time moving"}
+            tickInterval={60}
+            valueFormatterType={"toHoursAndMinutes"}
+            scrollId={scrollId}
+          />
+        </div>
       </div>
     </div>
   );
