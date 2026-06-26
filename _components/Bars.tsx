@@ -141,12 +141,12 @@ const Bars = ({ now, activities }: BarsProps) => {
 
   const columnWidth = 47.93;
 
-  const scrollId = "scroll";
+  const scrollContainerId = "scroll";
 
   return (
     <div
       className="w-dvw h-dvh overflow-x-auto overflow-y-auto scrollbar-none flex justify-center-safe"
-      id={scrollId}
+      id={scrollContainerId}
     >
       <div className="w-max">
         <div className="my-4 px-4 inline-block sticky left-0 font-semibold">
@@ -213,14 +213,19 @@ const Bars = ({ now, activities }: BarsProps) => {
             data={daysData}
             title={"Days on"}
             tickInterval={1}
-            scrollId={scrollId}
+            scrollContainerId={scrollContainerId}
           />
           <BarChart
             data={timeData}
             title={"Time moving"}
-            tickInterval={60}
+            tickInterval={
+              (Math.floor(
+                Math.max(...timeData.map((dataPoint) => dataPoint.value)) /
+                  7 /
+                  30,
+              ) || 1) * 30
+            }
             valueFormatterType={"toHoursAndMinutes"}
-            scrollId={scrollId}
           />
         </div>
       </div>
