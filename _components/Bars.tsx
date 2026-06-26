@@ -168,7 +168,7 @@ const Bars = ({ now, activities }: BarsProps) => {
           </div>
         </div>
 
-        <div className="z-1 px-4 sticky top-0 bg-[rgb(20,20,20)]">
+        <div className="px-4 sticky top-0 bg-[rgb(20,20,20)]">
           <div className="opacity-33 font-semibold">
             <div
               className="flex"
