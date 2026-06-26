@@ -15,6 +15,7 @@ type BarChartProps = {
   data: DataPoint[];
   tickInterval: number;
   valueFormatterType?: string;
+  scrollId: string;
 };
 
 const BarChart = ({
@@ -22,6 +23,7 @@ const BarChart = ({
   data,
   tickInterval,
   valueFormatterType,
+  scrollId,
 }: BarChartProps) => {
   const svgRef = useRef<SVGSVGElement | null>(null);
 
@@ -316,11 +318,10 @@ const BarChart = ({
             : "rgba(219,68,55, 1.0)",
       );
 
-    window.scrollTo({
-      left: document.documentElement.scrollWidth,
-      top: 0,
-      behavior: "smooth",
-    });
+    const scrollElement = document.getElementById(scrollId);
+    if (scrollElement) {
+      scrollElement.scrollLeft = scrollElement?.scrollWidth;
+    }
   }, []);
 
   return (

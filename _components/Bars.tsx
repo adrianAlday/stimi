@@ -141,8 +141,13 @@ const Bars = ({ now, activities }: BarsProps) => {
 
   const columnWidth = 47.93;
 
+  const scrollId = "scroll";
+
   return (
-    <div className="w-dvw flex justify-center-safe">
+    <div
+      className="w-dvw flex justify-center-safe overflow-x-auto overflow-y-auto"
+      id={scrollId}
+    >
       <div className="w-max">
         <div className="my-4 px-4 inline-block sticky left-0 font-semibold">
           <div className="flex items-center">
@@ -203,13 +208,19 @@ const Bars = ({ now, activities }: BarsProps) => {
           </div>
         </div>
 
-        <BarChart data={daysData} title={"Days on"} tickInterval={1} />
+        <BarChart
+          data={daysData}
+          title={"Days on"}
+          tickInterval={1}
+          scrollId={scrollId}
+        />
 
         <BarChart
           data={timeData}
           title={"Time moving"}
           tickInterval={60}
           valueFormatterType={"toHoursAndMinutes"}
+          scrollId={scrollId}
         />
       </div>
     </div>
