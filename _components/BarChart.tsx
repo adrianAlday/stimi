@@ -165,37 +165,26 @@ const BarChart = ({
       .attr("offset", "100%")
       .attr("stop-color", "rgba(252, 82, 0, 1.0)");
 
-    const redBarGradient = defs
+    const lastBarGradientId = `${title
+      .replace(/([a-z])([A-Z])/g, "$1-$2")
+      .replace(/[\s_]+/g, "-")
+      .toLowerCase()}-last-bar-gradient`;
+    const lastBarGradientIdSelector = `#${lastBarGradientId}`;
+    const lastBarGradient = defs
       .append("linearGradient")
-      .attr("id", "red-bar-gradient")
+      .attr("id", lastBarGradientId)
       .attr("x1", "0%")
       .attr("y1", "100%")
       .attr("x2", "0%")
       .attr("y2", "0%");
-    redBarGradient
+    lastBarGradient
       .append("stop")
       .attr("offset", "0%")
-      .attr("stop-color", "rgba(219,68,55, 0.33)");
-    redBarGradient
+      .attr("stop-color", "rgba(252, 82, 0, 0.33)");
+    lastBarGradient
       .append("stop")
       .attr("offset", "100%")
-      .attr("stop-color", "rgba(219,68,55, 1.0)");
-
-    const greenBarGradient = defs
-      .append("linearGradient")
-      .attr("id", "green-bar-gradient")
-      .attr("x1", "0%")
-      .attr("y1", "100%")
-      .attr("x2", "0%")
-      .attr("y2", "0%");
-    greenBarGradient
-      .append("stop")
-      .attr("offset", "0%")
-      .attr("stop-color", "rgba(15,157,88, 0.33)");
-    greenBarGradient
-      .append("stop")
-      .attr("offset", "100%")
-      .attr("stop-color", "rgba(15,157,88, 1.0)");
+      .attr("stop-color", "rgba(252, 82, 0, 1.0)");
 
     g.selectAll(".bar")
       .data(data)
@@ -318,12 +307,21 @@ const BarChart = ({
 
     g.selectAll(".bar")
       .filter((_d, index) => index === lastIndex)
+      .attr("fill", `url(${lastBarGradientIdSelector})`);
+    defs
+      .select(lastBarGradientIdSelector)
+      .selectAll("stop")
       .transition()
       .delay(timeUnit * 4)
       .duration(timeUnit)
-      .attr(
-        "fill",
-        goalMet ? "url(#green-bar-gradient)" : "url(#red-bar-gradient)",
+      .attr("stop-color", (d, i) =>
+        goalMet
+          ? i === 0
+            ? "rgba(15,157,88, 0.33)"
+            : "rgba(15,157,88, 1.0)"
+          : i === 0
+            ? "rgba(219,68,55, 0.33)"
+            : "rgba(219,68,55, 1.0)",
       );
 
     window.scrollTo({
