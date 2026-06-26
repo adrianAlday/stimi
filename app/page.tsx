@@ -129,3 +129,4 @@ export default HomePage;
 // demo page with my data
 // switch goal back to target?
 // say `${value}+`
+// line opacity 0 at beginning and 1 at recent end?
