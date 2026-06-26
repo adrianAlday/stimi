@@ -145,7 +145,7 @@ const Bars = ({ now, activities }: BarsProps) => {
 
   return (
     <div
-      className="w-dvw flex justify-center-safe overflow-x-auto overflow-y-auto"
+      className="w-dvw h-dvh overflow-x-auto overflow-y-auto flex justify-center-safe"
       id={scrollId}
     >
       <div className="w-max">
