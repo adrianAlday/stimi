@@ -144,7 +144,7 @@ const Bars = ({ now, activities }: BarsProps) => {
   return (
     <div className="w-dvw flex justify-center-safe">
       <div className="w-max">
-        <div className="mt-4 px-4 inline-block sticky left-0 font-semibold">
+        <div className="my-4 px-4 inline-block sticky left-0 font-semibold">
           <div className="flex items-center">
             <div className={"font-black text-[rgb(252,82,0)] text-2xl"}>
               STiMi
