@@ -145,7 +145,7 @@ const Bars = ({ now, activities }: BarsProps) => {
 
   return (
     <div
-      className="w-dvw h-dvh overflow-x-auto overflow-y-auto flex justify-center-safe"
+      className="w-dvw h-dvh overflow-x-auto overflow-y-auto scrollbar-none flex justify-center-safe"
       id={scrollId}
     >
       <div className="w-max">
@@ -168,7 +168,7 @@ const Bars = ({ now, activities }: BarsProps) => {
           </div>
         </div>
 
-        <div className="px-4 sticky top-0 bg-[rgb(20,20,20)]">
+        <div className="z-2 px-4 sticky top-0 bg-[rgb(20,20,20)]">
           <div className="opacity-33 font-semibold">
             <div
               className="flex"

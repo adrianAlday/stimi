@@ -329,9 +329,7 @@ const BarChart = ({
 
   return (
     <div className="my-4 px-4 w-max">
-      <div className="-z-10 inline-block sticky left-4 font-semibold">
-        {title}
-      </div>
+      <div className="inline-block sticky left-4 font-semibold">{title}</div>
 
       <svg ref={svgRef} height={height} width={width} />
     </div>
