@@ -5,7 +5,7 @@ export const GET = async (request: NextRequest) => {
   const supabase = await createClient();
 
   const selectResponse = await supabase
-    .from("strava_refresh_tokens")
+    .from("strava_athletes")
     .select("refresh_token")
     .eq("id", Object.fromEntries(request.nextUrl.searchParams.entries()).id);
 

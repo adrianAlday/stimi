@@ -28,7 +28,7 @@ export const GET = async (request: NextRequest) => {
 
   const supabase = await createClient();
 
-  const upsertResponse = await supabase.from("strava_refresh_tokens").upsert(
+  const upsertResponse = await supabase.from("strava_athletes").upsert(
     {
       id,
       scope,
