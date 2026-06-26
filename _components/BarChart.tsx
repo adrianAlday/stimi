@@ -320,7 +320,10 @@ const BarChart = ({
 
     const scrollElement = document.getElementById(scrollId);
     if (scrollElement) {
-      scrollElement.scrollLeft = scrollElement?.scrollWidth;
+      scrollElement.scrollTo({
+        left: scrollElement.scrollWidth,
+        behavior: "smooth",
+      });
     }
   }, []);
 
