@@ -129,3 +129,5 @@ export default HomePage;
 // refetch on what cadence? one page? webhooks?
 // allow admin power
 // demo page with my data
+// switch goal back to target?
+// say `${value}+`
