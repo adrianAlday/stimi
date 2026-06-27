@@ -26,10 +26,8 @@ export const GET = async (request: NextRequest) => {
 export const POST = async (request: NextRequest) => {
   let response = {};
 
-  const requestJson = await request.json();
-  console.log("requestJson", requestJson);
   const { object_type, aspect_type, updates, owner_id, object_id } =
-    requestJson;
+    await request.json();
 
   if (object_type === "activity") {
     if (
@@ -46,18 +44,20 @@ export const POST = async (request: NextRequest) => {
         accessToken: accessTokenResponse.access_token,
       });
 
-      console.log("activities", [activityResponse, ...activitiesResponse]);
-
       response = await upsertActivities([
         activityResponse,
         ...activitiesResponse,
       ]);
+
+      console.log("response1", response);
     }
 
     if (aspect_type === "delete") {
       response = await deleteActivity(object_id);
     }
   }
+
+  console.log("response2", response);
 
   return NextResponse.json(response);
 };
