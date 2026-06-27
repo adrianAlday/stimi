@@ -6,6 +6,8 @@ import {
   getActivityReponse,
   upsertActivities,
 } from "../activities/route";
+import crypto from "crypto";
+import { Buffer } from "buffer";
 
 export const GET = async (request: NextRequest) => {
   const searchParamsObject = Object.fromEntries(
@@ -24,47 +26,90 @@ export const GET = async (request: NextRequest) => {
 };
 
 export const POST = async (request: NextRequest) => {
-  let response = {};
-
-  console.log("request.headers", request.headers);
-  console.log("request.referrer", request.referrer);
-  console.log(
-    "request.headers.get('sec-fetch-site')",
-    request.headers.get("sec-fetch-site"),
-  );
-
-  const { object_type, aspect_type, updates, owner_id, object_id } =
-    await request.json();
-
-  if (object_type === "activity") {
-    if (
-      aspect_type === "create" ||
-      (aspect_type === "update" && updates?.type)
-    ) {
-      const accessTokenResponse = await getAccessTokenResponse(owner_id);
-
-      const activityResponse = await getActivityReponse({
-        accessToken: accessTokenResponse.access_token,
-        activityId: object_id,
-      });
-      const activitiesResponse = await getActivitiesReponse({
-        accessToken: accessTokenResponse.access_token,
-      });
-
-      response = await upsertActivities([
-        ...new Map(
-          [activityResponse, ...activitiesResponse].map((activity) => [
-            activity.id,
-            activity,
-          ]),
-        ).values(),
-      ]);
-    }
-
-    if (aspect_type === "delete") {
-      response = await deleteActivity(object_id);
-    }
+  const headerValue = request.headers.get("x-strava-signature");
+  const clientSecret = process.env.STRAVA_CLIENT_SECRET;
+  if (!headerValue || !clientSecret) {
+    return NextResponse.json(
+      { error: "Unauthorized missing signature or secret" },
+      { status: 401 },
+    );
   }
 
-  return NextResponse.json(response);
+  try {
+    const { t: timestamp, v1: receivedSignature } = Object.fromEntries(
+      headerValue.split(",").map((string) => string.split("=")),
+    );
+    if (!timestamp || !receivedSignature) {
+      return NextResponse.json(
+        { error: "Invalid signature format" },
+        { status: 400 },
+      );
+    }
+
+    if (
+      Math.abs(Math.floor(Date.now() / 1000) - parseInt(timestamp, 10)) > 300
+    ) {
+      return NextResponse.json({ error: "Request expired" }, { status: 400 });
+    }
+
+    if (
+      !crypto.timingSafeEqual(
+        Buffer.from(receivedSignature, "hex"),
+        Buffer.from(
+          crypto
+            .createHmac("sha256", clientSecret)
+            .update(`${timestamp}.${await request.text()}`)
+            .digest("hex"),
+          "hex",
+        ),
+      )
+    ) {
+      return NextResponse.json(
+        { error: "Invalid signature match" },
+        { status: 401 },
+      );
+    }
+
+    const { object_type, aspect_type, updates, owner_id, object_id } =
+      await request.json();
+
+    if (object_type === "activity") {
+      if (
+        aspect_type === "create" ||
+        (aspect_type === "update" && updates?.type)
+      ) {
+        const accessTokenResponse = await getAccessTokenResponse(owner_id);
+
+        const activityResponse = await getActivityReponse({
+          accessToken: accessTokenResponse.access_token,
+          activityId: object_id,
+        });
+        const activitiesResponse = await getActivitiesReponse({
+          accessToken: accessTokenResponse.access_token,
+        });
+
+        await upsertActivities([
+          ...new Map(
+            [activityResponse, ...activitiesResponse].map((activity) => [
+              activity.id,
+              activity,
+            ]),
+          ).values(),
+        ]);
+      }
+
+      if (aspect_type === "delete") {
+        await deleteActivity(object_id);
+      }
+    }
+
+    return NextResponse.json({ message: "EVENT_RECEIVED" }, { status: 200 });
+  } catch (error) {
+    console.error("Webhook error:", error);
+
+    return NextResponse.json(
+      { error: "Internal Server Error" },
+      { status: 500 },
+    );
+  }
 };
