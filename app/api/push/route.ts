@@ -53,18 +53,17 @@ export const POST = async (request: NextRequest) => {
     }
 
     const rawBody = await request.text();
+    const expected = crypto
+      .createHmac("sha256", clientSecret)
+      .update(`${timestamp}.${rawBody}`)
+      .digest("hex");
     if (
       !crypto.timingSafeEqual(
         Buffer.from(receivedSignature),
-        Buffer.from(
-          crypto
-            .createHmac("sha256", clientSecret)
-            .update(`${timestamp}.${rawBody}`)
-            .digest("hex"),
-        ),
+        Buffer.from(expected),
       )
     ) {
-      console.log("Invalid signature match remove hex");
+      console.log("Invalid signature match like strava");
       return NextResponse.json(
         { error: "Invalid signature match" },
         { status: 401 },
