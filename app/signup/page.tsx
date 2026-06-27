@@ -20,7 +20,8 @@ const SignupPage = async () => {
             `&redirect_uri=http${isDev ? "" : "s"}://${host}/api/signup` +
             `&state=${referer}`
           }
-          className="relative size-[33dvw]"
+          className="relative"
+          style={{ height: 48, width: 237 }}
         >
           <Image
             src={"/connect.svg"}
