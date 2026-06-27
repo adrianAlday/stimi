@@ -7,6 +7,16 @@ export const GET = async (request: NextRequest) => {
     request.nextUrl.searchParams.entries(),
   );
 
+  console.log(
+    "searchParamsObject.verify_token",
+    searchParamsObject.verify_token,
+  );
+  console.log("process.env.PUSH_VERIFY_TOKEN", process.env.PUSH_VERIFY_TOKEN);
+  console.log(
+    "searchParamsObject.verify_token === process.env.PUSH_VERIFY_TOKEN",
+    searchParamsObject.verify_token === process.env.PUSH_VERIFY_TOKEN,
+  );
+
   if (searchParamsObject.verify_token === process.env.PUSH_VERIFY_TOKEN) {
     const validationResponse = await fetch(pushApiUrl, {
       method: "POST",
@@ -22,6 +32,8 @@ export const GET = async (request: NextRequest) => {
 
     return NextResponse.json(validationResponse);
   }
+
+  return NextResponse.json({});
 };
 
 export const POST = async (request: NextRequest) => {

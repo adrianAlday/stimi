@@ -1,3 +1,5 @@
+import { NextResponse } from "next/server";
+
 export const pushApiUrl = "https://www.strava.com/api/v3/push_subscriptions";
 
 export const POST = async () => {
@@ -15,4 +17,6 @@ export const POST = async () => {
   }).then(async (response) => await response.json());
 
   console.log(subscribeReponse);
+
+  return NextResponse.json(subscribeReponse);
 };
