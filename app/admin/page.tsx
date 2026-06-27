@@ -2,6 +2,8 @@ import { getCookie } from "../page";
 import AdminPanel from "@/_components/AdminPanel";
 import { redirect } from "next/navigation";
 
+export const dynamic = "force-dynamic";
+
 const AdminPage = async () => {
   const cookie = await getCookie();
 
