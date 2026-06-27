@@ -26,6 +26,13 @@ export const GET = async (request: NextRequest) => {
 export const POST = async (request: NextRequest) => {
   let response = {};
 
+  console.log("request.headers", request.headers);
+  console.log("request.referrer", request.referrer);
+  console.log(
+    "request.headers.get('sec-fetch-site')",
+    request.headers.get("sec-fetch-site"),
+  );
+
   const { object_type, aspect_type, updates, owner_id, object_id } =
     await request.json();
 
