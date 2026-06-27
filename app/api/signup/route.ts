@@ -51,8 +51,6 @@ export const GET = async (request: NextRequest) => {
       maxAge: 60 * 60 * 24 * 400,
     });
 
-    // go to fetching page
-
-    return NextResponse.redirect(new URL("/", request.url));
+    return NextResponse.redirect(new URL("/download", request.url));
   }
 };

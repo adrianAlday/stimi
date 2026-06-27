@@ -45,8 +45,6 @@ export const POST = async (request: NextRequest) => {
     )
     .select();
 
-  console.log(upsertResponse);
-
   return NextResponse.json(activitiesResponse);
 };
 
