@@ -1,11 +1,8 @@
 import { createClient } from "@/app/_utils/supabase/server";
-import { NextRequest } from "next/server";
-
-export const pushApiUrl = "https://www.strava.com/api/v3/push_subscriptions";
+import { NextRequest, NextResponse } from "next/server";
+import { pushApiUrl } from "../subscribe/route";
 
 export const GET = async (request: NextRequest) => {
-  // make request to sub
-
   const searchParamsObject = Object.fromEntries(
     request.nextUrl.searchParams.entries(),
   );
@@ -23,9 +20,7 @@ export const GET = async (request: NextRequest) => {
 
     console.log("validationResponse", validationResponse);
 
-    if (validationResponse.id) {
-      // update supabase say subscribed?
-    }
+    return NextResponse.json(validationResponse);
   }
 };
 

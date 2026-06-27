@@ -1,0 +1,27 @@
+import { getCookie } from "../page";
+import AdminPanel from "@/_components/AdminPanel";
+import { redirect } from "next/navigation";
+
+const AdminPage = async () => {
+  const cookie = await getCookie();
+
+  const adminIdAllowlist = (process.env.ADMIN_ID_ALLOWLIST || "")
+    .split(", ")
+    .map((string) => Number(string));
+
+  if (
+    cookie?.id &&
+    adminIdAllowlist &&
+    adminIdAllowlist.includes(Number(cookie.id))
+  ) {
+    return (
+      <main>
+        <AdminPanel />
+      </main>
+    );
+  } else {
+    redirect("/signup");
+  }
+};
+
+export default AdminPage;
