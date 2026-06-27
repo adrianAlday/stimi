@@ -29,7 +29,7 @@ export const getActivitiesReponse = async (options: {
 export const getActivityReponse = async (options: {
   [key: string]: string;
 }) => {
-  return (await fetch(`"${basePath}/activities"/${options.activityId}`, {
+  return (await fetch(`${basePath}/activities/${options.activityId}`, {
     method: "GET",
     headers: {
       Authorization: `Bearer ${options.accessToken}`,
