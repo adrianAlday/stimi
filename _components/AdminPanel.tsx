@@ -14,11 +14,7 @@ const AdminPanel = () => {
   };
 
   const deleteSubscription = async () => {
-    const getReponse = await fetch("/api/subscribe").then(
-      async (response) => await response.json(),
-    );
-
-    await fetch(`/api/subscribe?id=${getReponse[0].id}`, {
+    await fetch(`/api/subscribe`, {
       method: "DELETE",
     }).then(async (response) => await response.json());
   };

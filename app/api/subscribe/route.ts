@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 
 export const pushApiUrl = "https://www.strava.com/api/v3/push_subscriptions";
 
@@ -19,21 +19,25 @@ export const POST = async () => {
   return NextResponse.json(subscribeReponse);
 };
 
-export const GET = async () => {
+const getSubscriptionResponse = async () => {
   const params = {
     client_id: process.env.NEXT_PUBLIC_STRAVA_CLIENT_ID || "",
     client_secret: process.env.STRAVA_CLIENT_SECRET || "",
   };
   const queryString = new URLSearchParams(params).toString();
 
-  const getResponse = await fetch(`${pushApiUrl}?${queryString}`).then(
+  return await fetch(`${pushApiUrl}?${queryString}`).then(
     async (response) => await response.json(),
   );
-
-  return NextResponse.json(getResponse);
 };
 
-export const DELETE = async (request: NextRequest) => {
+export const GET = async () => {
+  return NextResponse.json(await getSubscriptionResponse());
+};
+
+export const DELETE = async () => {
+  const subscriptionResponse = await getSubscriptionResponse();
+
   const params = {
     client_id: process.env.NEXT_PUBLIC_STRAVA_CLIENT_ID || "",
     client_secret: process.env.STRAVA_CLIENT_SECRET || "",
@@ -41,9 +45,7 @@ export const DELETE = async (request: NextRequest) => {
   const queryString = new URLSearchParams(params).toString();
 
   const deleteResponse = await fetch(
-    `${pushApiUrl}/${
-      Object.fromEntries(request.nextUrl.searchParams.entries()).id
-    }?${queryString}`,
+    `${pushApiUrl}/${subscriptionResponse[0]?.id}?${queryString}`,
     {
       method: "DELETE",
     },
