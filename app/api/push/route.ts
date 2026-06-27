@@ -52,16 +52,12 @@ export const POST = async (request: NextRequest) => {
           ]),
         ).values(),
       ]);
-
-      console.log("response1", response);
     }
 
     if (aspect_type === "delete") {
       response = await deleteActivity(object_id);
     }
   }
-
-  console.log("response2", response);
 
   return NextResponse.json(response);
 };
