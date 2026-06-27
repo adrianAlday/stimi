@@ -29,7 +29,6 @@ export const POST = async (request: NextRequest) => {
   const headerValue = request.headers.get("x-strava-signature");
   const clientSecret = process.env.STRAVA_CLIENT_SECRET;
   if (!headerValue || !clientSecret) {
-    console.log("Unauthorized missing signature or secret");
     return NextResponse.json(
       { error: "Unauthorized missing signature or secret" },
       { status: 401 },
@@ -53,19 +52,20 @@ export const POST = async (request: NextRequest) => {
       return NextResponse.json({ error: "Request expired" }, { status: 400 });
     }
 
+    const rawBody = await request.text();
     if (
       !crypto.timingSafeEqual(
         Buffer.from(receivedSignature, "hex"),
         Buffer.from(
           crypto
             .createHmac("sha256", clientSecret)
-            .update(`${timestamp}.${await request.text()}`)
+            .update(`${timestamp}.${rawBody}`)
             .digest("hex"),
           "hex",
         ),
       )
     ) {
-      console.log("Invalid signature match");
+      console.log("Invalid signature match after raw body variable");
       return NextResponse.json(
         { error: "Invalid signature match" },
         { status: 401 },
