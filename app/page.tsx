@@ -116,3 +116,4 @@ export default HomePage;
 // filter select activities by date
 // change api/activities/post to use body insead of query string
 // review error handling, success checking
+// promise all simultaneous calls
