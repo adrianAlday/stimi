@@ -1,6 +1,6 @@
-import { getCookie } from "../page";
 import AdminPanel from "@/_components/AdminPanel";
 import { redirect } from "next/navigation";
+import { getCookie } from "../_utils/cookies";
 
 export const dynamic = "force-dynamic";
 // or do suspense

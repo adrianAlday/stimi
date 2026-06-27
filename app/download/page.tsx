@@ -1,10 +1,10 @@
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { DateTime } from "luxon";
-import { getCookie } from "../page";
 import { Suspense } from "react";
 import Bouncer from "@/_components/Bouncer";
 import { JWTPayload } from "jose";
+import { getCookie } from "../_utils/cookies";
 
 type DataFetchingProps = {
   now: DateTime<true>;

@@ -1,28 +1,8 @@
-import { cookies, headers } from "next/headers";
-import { cookieName, verifyJwt } from "./_utils/cookies";
+import { headers } from "next/headers";
+import { getCookie } from "./_utils/cookies";
 import { redirect } from "next/navigation";
 import Bars from "@/_components/Bars";
 import { DateTime } from "luxon";
-
-export const getCookie = async () => {
-  try {
-    const cookieStore = await cookies();
-
-    const cookie = cookieStore.get(cookieName)?.value;
-
-    if (!cookie) {
-      return null;
-    }
-
-    const payload = await verifyJwt(cookie);
-
-    return payload;
-  } catch (error) {
-    console.error(error);
-
-    return null;
-  }
-};
 
 const HomePage = async () => {
   const now = DateTime.now();

@@ -1,6 +1,5 @@
 import { SignJWT, jwtVerify } from "jose";
-
-export const cookieName = "token";
+import { cookies } from "next/headers";
 
 const encodedJwtSecret = new TextEncoder().encode(process.env.JWT_SECRET);
 
@@ -16,6 +15,28 @@ export const verifyJwt = async (token: string) => {
     return payload;
   } catch (error) {
     console.log(error);
+
+    return null;
+  }
+};
+
+export const cookieName = "token";
+
+export const getCookie = async () => {
+  try {
+    const cookieStore = await cookies();
+
+    const cookie = cookieStore.get(cookieName)?.value;
+
+    if (!cookie) {
+      return null;
+    }
+
+    const payload = await verifyJwt(cookie);
+
+    return payload;
+  } catch (error) {
+    console.error(error);
 
     return null;
   }
