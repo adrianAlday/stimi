@@ -26,8 +26,10 @@ export const GET = async (request: NextRequest) => {
 export const POST = async (request: NextRequest) => {
   let response = {};
 
+  const requestJson = await request.json();
+  console.log("requestJson", requestJson);
   const { object_type, aspect_type, updates, owner_id, object_id } =
-    await request.json();
+    requestJson;
 
   if (object_type === "activity") {
     if (
@@ -43,6 +45,8 @@ export const POST = async (request: NextRequest) => {
       const activitiesResponse = await getActivitiesReponse({
         accessToken: accessTokenResponse.access_token,
       });
+
+      console.log("activities", [activityResponse, ...activitiesResponse]);
 
       response = await upsertActivities([
         activityResponse,
