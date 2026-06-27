@@ -113,3 +113,4 @@ export default HomePage;
 // homepage with video background
 // move get cookie?
 // move all strava api management into new repo, other apps will be called by it
+// filter select activities by date
