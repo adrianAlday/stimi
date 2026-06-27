@@ -29,6 +29,7 @@ export const POST = async (request: NextRequest) => {
   const headerValue = request.headers.get("x-strava-signature");
   const clientSecret = process.env.STRAVA_CLIENT_SECRET;
   if (!headerValue || !clientSecret) {
+    console.log("Unauthorized missing signature or secret");
     return NextResponse.json(
       { error: "Unauthorized missing signature or secret" },
       { status: 401 },
@@ -64,6 +65,7 @@ export const POST = async (request: NextRequest) => {
         ),
       )
     ) {
+      console.log("Invalid signature match");
       return NextResponse.json(
         { error: "Invalid signature match" },
         { status: 401 },
