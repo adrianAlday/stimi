@@ -114,3 +114,4 @@ export default HomePage;
 // move get cookie?
 // move all strava api management into new repo, other apps will be called by it
 // filter select activities by date
+// change api/activities/post to use body insead of query string
