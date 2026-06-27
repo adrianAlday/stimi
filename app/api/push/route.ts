@@ -55,17 +55,16 @@ export const POST = async (request: NextRequest) => {
     const rawBody = await request.text();
     if (
       !crypto.timingSafeEqual(
-        Buffer.from(receivedSignature, "hex"),
+        Buffer.from(receivedSignature),
         Buffer.from(
           crypto
             .createHmac("sha256", clientSecret)
             .update(`${timestamp}.${rawBody}`)
             .digest("hex"),
-          "hex",
         ),
       )
     ) {
-      console.log("Invalid signature match after raw body variable");
+      console.log("Invalid signature match remove hex");
       return NextResponse.json(
         { error: "Invalid signature match" },
         { status: 401 },
