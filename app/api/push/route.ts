@@ -37,7 +37,7 @@ export const POST = async (request: NextRequest) => {
 
   try {
     const { t: timestamp, v1: receivedSignature } = Object.fromEntries(
-      headerValue.split(",").map((string) => string.split("=")),
+      headerValue.split(",").map((part) => part.split("=", 2)),
     );
     if (!timestamp || !receivedSignature) {
       return NextResponse.json(
@@ -52,6 +52,10 @@ export const POST = async (request: NextRequest) => {
       return NextResponse.json({ error: "Request expired" }, { status: 400 });
     }
 
+    console.log("headerValue", headerValue);
+    console.log("timestamp", timestamp);
+    console.log("receivedSignature", receivedSignature);
+
     const rawBody = await request.text();
     const expected = crypto
       .createHmac("sha256", clientSecret)
@@ -63,7 +67,7 @@ export const POST = async (request: NextRequest) => {
         Buffer.from(expected),
       )
     ) {
-      console.log("Invalid signature match like strava");
+      console.log("Invalid signature match split like strava");
       return NextResponse.json(
         { error: "Invalid signature match" },
         { status: 401 },
