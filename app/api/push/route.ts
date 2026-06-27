@@ -57,6 +57,18 @@ export const POST = async (request: NextRequest) => {
       .createHmac("sha256", clientSecret)
       .update(`${timestamp}.${rawBody}`)
       .digest("hex");
+    console.log("expectedSignature", expectedSignature);
+    console.log("receivedSignature", receivedSignature);
+    console.log(
+      `crypto.timingSafeEqual(
+Buffer.from(receivedSignature),
+          Buffer.from(expectedSignature)       )`,
+      crypto.timingSafeEqual(
+        Buffer.from(receivedSignature),
+        Buffer.from(expectedSignature),
+      ),
+    );
+
     const signaturesMatch = (() => {
       try {
         return crypto.timingSafeEqual(
