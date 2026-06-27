@@ -1,5 +1,11 @@
-import { createClient } from "@/app/_utils/supabase/server";
 import { NextRequest, NextResponse } from "next/server";
+import { getAccessTokenResponse } from "../access-token/route";
+import {
+  deleteActivity,
+  getActivitiesReponse,
+  getActivityReponse,
+  upsertActivities,
+} from "../activities/route";
 
 export const GET = async (request: NextRequest) => {
   const searchParamsObject = Object.fromEntries(
@@ -18,32 +24,36 @@ export const GET = async (request: NextRequest) => {
 };
 
 export const POST = async (request: NextRequest) => {
-  const { object_type, aspect_type, updates, object_id, owner_id } =
+  let response = {};
+
+  const { object_type, aspect_type, updates, owner_id, object_id } =
     await request.json();
 
   if (object_type === "activity") {
-    const supabase = await createClient();
-
-    // api/activity singular endpoint ? add simple auth?
-
     if (
       aspect_type === "create" ||
       (aspect_type === "update" && updates?.type)
     ) {
-      const accessTokenParams = {
-        id: owner_id,
-      };
-      const accessTokenQueryString = new URLSearchParams(
-        accessTokenParams,
-      ).toString();
+      const accessTokenResponse = await getAccessTokenResponse(owner_id);
 
-      const accessTokenResponse = await fetch(
-        `/api/access-token?${accessTokenQueryString}`,
-      ).then(async (response) => await response.json());
+      const activityResponse = await getActivityReponse({
+        accessToken: accessTokenResponse.access_token,
+        activityId: object_id,
+      });
+      const activitiesResponse = await getActivitiesReponse({
+        accessToken: accessTokenResponse.access_token,
+      });
+
+      response = await upsertActivities([
+        activityResponse,
+        ...activitiesResponse,
+      ]);
     }
 
     if (aspect_type === "delete") {
-      await supabase.from("strava_activities").delete().eq("id", object_id);
+      response = await deleteActivity(object_id);
     }
   }
+
+  return NextResponse.json(response);
 };

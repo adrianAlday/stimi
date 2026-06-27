@@ -1,38 +1,59 @@
 import { createClient } from "@/app/_utils/supabase/server";
 import { NextRequest, NextResponse } from "next/server";
 
-export const POST = async (request: NextRequest) => {
-  // get access token here?
-  // change to use body insead of query
+export const activitiesPath =
+  "https://www.strava.com/api/v3/athlete/activities";
 
-  const path = "https://www.strava.com/api/v3/athlete/activities";
+type Activity = {
+  [key: string]: string | { id: string };
+  athlete: { id: string };
+};
 
-  const searchParamsObject = Object.fromEntries(
-    request.nextUrl.searchParams.entries(),
-  );
+export const getActivitiesReponse = async (options: {
+  [key: string]: string;
+}) => {
   const params = {
-    before: searchParamsObject.before || "9999999999",
-    per_page: searchParamsObject.perPage || "200",
-    page: searchParamsObject.page || "1",
+    before: options.before || "9999999999",
+    per_page: options.perPage || "200",
+    page: options.page || "1",
   };
   const queryString = new URLSearchParams(params).toString();
 
-  const activitiesResponse = (await fetch(`${path}?${queryString}`, {
+  return (await fetch(`${activitiesPath}?${queryString}`, {
     method: "GET",
     headers: {
-      Authorization: `Bearer ${searchParamsObject.accessToken}`,
+      Authorization: `Bearer ${options.accessToken}`,
     },
-  }).then(async (response) => await response.json())) as {
-    [key: string]: string | { id: string };
-    athlete: { id: string };
-  }[];
+  }).then(async (response) => await response.json())) as Activity[];
+};
 
+export const getActivityReponse = async (options: {
+  [key: string]: string;
+}) => {
+  return (await fetch(`${activitiesPath}/${options.activityId}`, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${options.accessToken}`,
+    },
+  }).then(async (response) => await response.json())) as Activity;
+};
+
+const selectActivities = async (stravaAthleteId: string) => {
   const supabase = await createClient();
 
-  const upsertResponse = await supabase
+  return await supabase
+    .from("strava_activities")
+    .select("sport_type, start_date_local, moving_time")
+    .eq("strava_athlete_id", stravaAthleteId);
+};
+
+export const upsertActivities = async (activities: Activity[]) => {
+  const supabase = await createClient();
+
+  return await supabase
     .from("strava_activities")
     .upsert(
-      activitiesResponse.map(
+      activities.map(
         ({ id, athlete, sport_type, start_date_local, moving_time }) => ({
           id,
           strava_athlete_id: athlete.id,
@@ -44,21 +65,27 @@ export const POST = async (request: NextRequest) => {
       { onConflict: "id" },
     )
     .select();
+};
 
-  return NextResponse.json(activitiesResponse);
+export const deleteActivity = async (activityId: string) => {
+  const supabase = await createClient();
+
+  return await supabase.from("strava_activities").delete().eq("id", activityId);
+};
+
+export const POST = async (request: NextRequest) => {
+  const activitiesResponse = await getActivitiesReponse(
+    Object.fromEntries(request.nextUrl.searchParams.entries()),
+  );
+
+  return NextResponse.json(await upsertActivities(activitiesResponse));
 };
 
 export const GET = async (request: NextRequest) => {
-  const supabase = await createClient();
-
-  const selectResponse = await supabase
-    .from("strava_activities")
-    .select("sport_type, start_date_local, moving_time")
-    .eq(
-      "strava_athlete_id",
+  return NextResponse.json(
+    await selectActivities(
       Object.fromEntries(request.nextUrl.searchParams.entries())
         .strava_athlete_id,
-    );
-
-  return NextResponse.json(selectResponse);
+    ),
+  );
 };
