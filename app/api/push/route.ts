@@ -7,6 +7,16 @@ export const GET = async (request: NextRequest) => {
     request.nextUrl.searchParams.entries(),
   );
 
+  console.log(
+    `searchParamsObject["hub.verify_token"]`,
+    searchParamsObject["hub.verify_token"],
+  );
+  console.log("process.env.PUSH_VERIFY_TOKEN", process.env.PUSH_VERIFY_TOKEN);
+  console.log(
+    `searchParamsObject["hub.verify_token"] === process.env.PUSH_VERIFY_TOKEN`,
+    searchParamsObject["hub.verify_token"] === process.env.PUSH_VERIFY_TOKEN,
+  );
+
   if (
     searchParamsObject["hub.verify_token"] === process.env.PUSH_VERIFY_TOKEN
   ) {
