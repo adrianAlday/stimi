@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 import Bars from "@/_components/Bars";
 import { DateTime } from "luxon";
 
-const getCookie = async () => {
+export const getCookie = async () => {
   try {
     const cookieStore = await cookies();
 
@@ -37,59 +37,31 @@ const HomePage = async () => {
   const host = resolvedHeaders.get("host");
   const baseUrl = `http://${host}`;
 
-  const accessTokenParams = {
-    id: `${cookie.id}`,
+  const stravaAthleteId = `${cookie.id}`;
+
+  const activitesParams = {
+    strava_athlete_id: stravaAthleteId,
   };
-  const accessTokenQueryString = new URLSearchParams(
-    accessTokenParams,
-  ).toString();
-  const accessTokenResponse = await fetch(
-    `${baseUrl}/api/access-token?${accessTokenQueryString}`,
+  const activitiesQueryString = new URLSearchParams(activitesParams).toString();
+
+  const activitiesResponse = await fetch(
+    `${baseUrl}/api/activities?${activitiesQueryString}`,
   ).then(async (response) => await response.json());
 
-  const activities = [];
-
-  const targetLookBackDate = now.minus({ months: 25 });
-
-  for (let i = 0; ; i++) {
-    const activitesParams = {
-      accessToken: accessTokenResponse.access_token,
-      page: `${i + 1}`,
-    };
-    const activitiesQueryString = new URLSearchParams(
-      activitesParams,
-    ).toString();
-    const activitiesResponse = await fetch(
-      `${baseUrl}/api/activities?${activitiesQueryString}`,
-    ).then(async (response) => await response.json());
-
-    const activiyKeysToPluck = [
-      "sport_type",
-      "start_date_local",
-      "moving_time",
-    ];
-
-    activities.push(
-      ...activitiesResponse.map((activity: { [key: string]: string }) =>
-        Object.fromEntries(
-          activiyKeysToPluck.map((key) => [
+  const activities = activitiesResponse.data.map(
+    (activity: { [key: string]: string }) =>
+      Object.keys(activity).reduce(
+        (accumulator, key) => {
+          accumulator[
             key
               .replace(/[-_ ]+(.)/g, (_, character) => character.toUpperCase())
-              .replace(/^[A-Z]/, (character) => character.toLowerCase()),
-            activity[key],
-          ]),
-        ),
+              .replace(/^[A-Z]/, (character) => character.toLowerCase())
+          ] = activity[key];
+          return accumulator;
+        },
+        {} as { [key: string]: string },
       ),
-    );
-
-    if (
-      !activitiesResponse.length ||
-      DateTime.fromISO(activitiesResponse.reverse()[0].start_date_local) <
-        targetLookBackDate
-    ) {
-      break;
-    }
-  }
+  );
 
   return (
     <main>
@@ -130,3 +102,13 @@ export default HomePage;
 // switch goal back to target?
 // say `${value}+`
 // line opacity 0 at beginning and 1 at recent end?
+// scroll snap?
+// prevent y overscroll?
+// smaller days chart?
+// remove mock data
+// make home the info and signup page?
+// add demo link to home page
+// user paths
+// allow to make public
+// homepage with video background
+// move get cookie?
