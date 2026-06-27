@@ -14,7 +14,6 @@ const DataFetching = async ({ now, cookie }: DataFetchingProps) => {
   const resolvedHeaders = await headers();
   const host = resolvedHeaders.get("host");
   const baseUrl = `http://${host}`;
-  // make baseurlhelper
 
   const stravaAthleteId = `${cookie.id}`;
 
@@ -65,8 +64,6 @@ const DownloadPage = async () => {
   if (!cookie?.id) {
     redirect("/signup");
   }
-
-  //  render loading thing then redirect https://www.google.com/search?q=react+suspense+fallback+with+progress+state
 
   return (
     <main>

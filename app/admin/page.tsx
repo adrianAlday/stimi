@@ -3,7 +3,6 @@ import { redirect } from "next/navigation";
 import { getCookie } from "../_utils/cookies";
 
 export const dynamic = "force-dynamic";
-// or do suspense
 
 const AdminPage = async () => {
   const cookie = await getCookie();

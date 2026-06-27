@@ -86,3 +86,7 @@ export default HomePage;
 // change api/activities/post to use body insead of query string
 // review error handling, success checking
 // promise all simultaneous calls
+// make baseurlhelper
+//  render loading thing then redirect https://www.google.com/search?q=react+suspense+fallback+with+progress+state
+// suspense instead of force dynamic on admin page?
+// flow: signup page -> authorize -> save token -> set cookie -> download -> root, webhook to refresh
