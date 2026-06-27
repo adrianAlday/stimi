@@ -1,8 +1,7 @@
 import { createClient } from "@/app/_utils/supabase/server";
 import { NextRequest, NextResponse } from "next/server";
 
-export const activitiesPath =
-  "https://www.strava.com/api/v3/athlete/activities";
+const basePath = "https://www.strava.com/api/v3";
 
 type Activity = {
   [key: string]: string | { id: string };
@@ -19,7 +18,7 @@ export const getActivitiesReponse = async (options: {
   };
   const queryString = new URLSearchParams(params).toString();
 
-  return (await fetch(`${activitiesPath}?${queryString}`, {
+  return (await fetch(`${basePath}/athlete/activities?${queryString}`, {
     method: "GET",
     headers: {
       Authorization: `Bearer ${options.accessToken}`,
@@ -30,7 +29,7 @@ export const getActivitiesReponse = async (options: {
 export const getActivityReponse = async (options: {
   [key: string]: string;
 }) => {
-  return (await fetch(`${activitiesPath}/${options.activityId}`, {
+  return (await fetch(`"${basePath}/activities"/${options.activityId}`, {
     method: "GET",
     headers: {
       Authorization: `Bearer ${options.accessToken}`,
