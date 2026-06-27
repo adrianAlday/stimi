@@ -20,6 +20,11 @@ export const GET = async (request: NextRequest) => {
   if (
     searchParamsObject["hub.verify_token"] === process.env.PUSH_VERIFY_TOKEN
   ) {
+    console.log(
+      `searchParamsObject["hub.challenge"]`,
+      searchParamsObject["hub.challenge"],
+    );
+
     const validationResponse = await fetch(pushApiUrl, {
       method: "POST",
       headers: {
