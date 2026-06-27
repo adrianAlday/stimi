@@ -45,8 +45,12 @@ export const POST = async (request: NextRequest) => {
       });
 
       response = await upsertActivities([
-        activityResponse,
-        ...activitiesResponse,
+        ...new Map(
+          [activityResponse, ...activitiesResponse].map((activity) => [
+            activity.id,
+            activity,
+          ]),
+        ).values(),
       ]);
 
       console.log("response1", response);
