@@ -75,16 +75,10 @@ export default HomePage;
 // learn from other apps https://www.strava.com/settings/apps
 // loader
 // use strava profile pic in corner?
-// store activities?
 // refresh button?
 // make strava auth the callback domain then redirect to stimi
 // redirect from signup to main page if has cookie
 // add admin mode
-// add year label on first week of year
-// add x number of weeks?
-// skip first week in case its partial?
-// figure out exact formula for ramp line
-// last column red/green if it meets ramp
 // load more button for more pages?
 // height dependent on data vs ticks?
 // or 280 height, make ticks change to not be crammed?
@@ -95,17 +89,12 @@ export default HomePage;
 // keep only last week from 2 years ago?
 // routing so that url goes to specific athlete
 // allow user to toggle making page public
-// fetch and save data
-// refetch on what cadence? one page? webhooks?
 // allow admin power
 // demo page with my data
 // switch goal back to target?
-// say `${value}+`
+// say `${value}+` for days
 // line opacity 0 at beginning and 1 at recent end?
-// scroll snap?
-// prevent y overscroll?
 // smaller days chart?
-// remove mock data
 // make home the info and signup page?
 // add demo link to home page
 // user paths
