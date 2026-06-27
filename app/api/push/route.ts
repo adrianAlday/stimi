@@ -52,22 +52,23 @@ export const POST = async (request: NextRequest) => {
       return NextResponse.json({ error: "Request expired" }, { status: 400 });
     }
 
-    console.log("headerValue", headerValue);
-    console.log("timestamp", timestamp);
-    console.log("receivedSignature", receivedSignature);
-
     const rawBody = await request.text();
-    const expected = crypto
+    const expectedSignature = crypto
       .createHmac("sha256", clientSecret)
       .update(`${timestamp}.${rawBody}`)
       .digest("hex");
-    if (
-      !crypto.timingSafeEqual(
-        Buffer.from(receivedSignature),
-        Buffer.from(expected),
-      )
-    ) {
-      console.log("Invalid signature match split like strava");
+    const signaturesMatch = (() => {
+      try {
+        return crypto.timingSafeEqual(
+          Buffer.from(receivedSignature),
+          Buffer.from(expectedSignature),
+        );
+      } catch {
+        return false;
+      }
+    })();
+    if (!signaturesMatch) {
+      console.log("Invalid signature match wrap in try");
       return NextResponse.json(
         { error: "Invalid signature match" },
         { status: 401 },
