@@ -1,5 +1,6 @@
 import { SignJWT, jwtVerify } from "jose";
 import { cookies } from "next/headers";
+import { cookieName } from "./cookieName";
 
 const encodedJwtSecret = new TextEncoder().encode(process.env.JWT_SECRET);
 
@@ -19,8 +20,6 @@ export const verifyJwt = async (token: string) => {
     return null;
   }
 };
-
-export const cookieName = "token";
 
 export const getCookie = async () => {
   try {

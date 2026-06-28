@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { redirect, useRouter } from "next/navigation";
-import { cookieName } from "../_utils/cookies";
+import { cookieName } from "../_utils/cookieName";
 
 const LogoutPage = () => {
   const router = useRouter();

@@ -1,4 +1,5 @@
-import { cookieName, signJwt } from "@/app/_utils/cookies";
+import { cookieName } from "@/app/_utils/cookieName";
+import { signJwt } from "@/app/_utils/cookies";
 import { createClient } from "@/app/_utils/supabase/server";
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
