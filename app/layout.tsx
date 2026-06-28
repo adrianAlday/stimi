@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { Montserrat } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
 
 export const montserrat = Montserrat({
   subsets: ["latin"],
@@ -18,7 +19,9 @@ const Layout = ({
 }>) => {
   return (
     <html lang="en" className={`subpixel-antialiased ${montserrat.className}`}>
-      <body>{children}</body>
+      <body>
+        {children} <Analytics />
+      </body>
     </html>
   );
 };
