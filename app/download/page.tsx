@@ -5,12 +5,15 @@ import { Suspense } from "react";
 import Bouncer from "@/_components/Bouncer";
 import { JWTPayload } from "jose";
 import { getCookie } from "../_utils/cookies";
+import { defaultActivitiesPageSize } from "@/app/api/activities/route";
+import { Params } from "@/app/_utils/types";
 
 type DataFetchingProps = {
   now: DateTime<true>;
   cookie: JWTPayload;
+  pageNumber: number;
 };
-const DataFetching = async ({ now, cookie }: DataFetchingProps) => {
+const DataFetching = async ({ now, cookie, pageNumber }: DataFetchingProps) => {
   const resolvedHeaders = await headers();
   const host = resolvedHeaders.get("host");
   const baseUrl = `http://${host}`;
@@ -29,34 +32,32 @@ const DataFetching = async ({ now, cookie }: DataFetchingProps) => {
 
   const targetLookBackDate = now.minus({ months: 25 });
 
-  for (let i = 0; ; i++) {
-    const activitesParams = {
-      accessToken: accessTokenResponse.access_token,
-      page: `${i + 1}`,
-    };
-    const activitiesQueryString = new URLSearchParams(
-      activitesParams,
-    ).toString();
-    const activitiesResponse = await fetch(
-      `${baseUrl}/api/activities?${activitiesQueryString}`,
-      {
-        method: "POST",
-      },
-    ).then(async (response) => await response.json());
+  const activitesParams = {
+    accessToken: accessTokenResponse.access_token,
+    page: `${pageNumber}`,
+  };
+  const activitiesQueryString = new URLSearchParams(activitesParams).toString();
+  const activitiesResponse = await fetch(
+    `${baseUrl}/api/activities?${activitiesQueryString}`,
+    {
+      method: "POST",
+    },
+  ).then(async (response) => await response.json());
 
-    if (
-      !activitiesResponse.length ||
-      DateTime.fromISO(activitiesResponse.reverse()[0].start_date_local) <
+  redirect(
+    !activitiesResponse.get.length ||
+      DateTime.fromISO(activitiesResponse.get.reverse()[0].start_date_local) <
         targetLookBackDate
-    ) {
-      break;
-    }
-  }
-
-  redirect("/");
+      ? "/"
+      : `/download?p=${pageNumber + 1}`,
+  );
 };
 
-const DownloadPage = async () => {
+type DownloadPageProps = {
+  searchParams: Promise<Params>;
+};
+
+const DownloadPage = async ({ searchParams }: DownloadPageProps) => {
   const now = DateTime.now();
 
   const cookie = await getCookie();
@@ -65,12 +66,25 @@ const DownloadPage = async () => {
     redirect("/signup");
   }
 
+  const resolvedParams = await searchParams;
+  const pageNumber = Number(resolvedParams.p || "1");
+
   return (
     <main>
+      <Bouncer />
+
       <Suspense
         fallback={
           <div>
-            <Bouncer />
+            <div
+              className={`mt-9 flex justify-center font-semibold animate-pulse`}
+            >
+              <div>
+                Downloading{" "}
+                {(pageNumber * defaultActivitiesPageSize).toLocaleString()}{" "}
+                activities
+              </div>
+            </div>
 
             {
               // more data needed to display on mobile
@@ -88,7 +102,7 @@ const DownloadPage = async () => {
           </div>
         }
       >
-        <DataFetching now={now} cookie={cookie} />
+        <DataFetching now={now} cookie={cookie} pageNumber={pageNumber} />
       </Suspense>
     </main>
   );

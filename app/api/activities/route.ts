@@ -1,6 +1,8 @@
 import { createClient } from "@/app/_utils/supabase/server";
 import { NextRequest, NextResponse } from "next/server";
 
+export const defaultActivitiesPageSize = 200;
+
 const basePath = "https://www.strava.com/api/v3";
 
 type Activity = {
@@ -13,7 +15,7 @@ export const getActivitiesReponse = async (options: {
 }) => {
   const params = {
     before: options.before || "9999999999",
-    per_page: options.perPage || "200",
+    per_page: options.perPage || `${defaultActivitiesPageSize}`,
     page: options.page || "1",
   };
   const queryString = new URLSearchParams(params).toString();
@@ -77,7 +79,10 @@ export const POST = async (request: NextRequest) => {
     Object.fromEntries(request.nextUrl.searchParams.entries()),
   );
 
-  return NextResponse.json(await upsertActivities(activitiesResponse));
+  return NextResponse.json({
+    get: activitiesResponse,
+    upsert: await upsertActivities(activitiesResponse),
+  });
 };
 
 export const GET = async (request: NextRequest) => {
