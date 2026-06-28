@@ -1,5 +1,6 @@
 import { DateTime } from "luxon";
 import BarChart, { DataPoint } from "./BarChart";
+import Link from "next/link";
 
 type Activity = {
   sportType: string;
@@ -151,9 +152,11 @@ const Bars = ({ now, activities }: BarsProps) => {
       <div className="w-max">
         <div className="my-4 px-4 inline-block sticky left-0 font-semibold">
           <div className="flex items-center">
-            <div className={"font-black text-[rgb(252,82,0)] text-2xl"}>
-              STiMi
-            </div>
+            <Link href={"/"}>
+              <div className={"font-black text-[rgb(252,82,0)] text-2xl"}>
+                STiMi
+              </div>
+            </Link>
 
             <svg
               viewBox="0 0 24 24"
