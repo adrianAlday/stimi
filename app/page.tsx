@@ -26,20 +26,15 @@ export default HomePage;
 // make bars go to that week on strava?
 // filter for after a specific date?
 // keep only last week from 2 years ago?
-// routing so that url goes to specific athlete
 // allow user to toggle making page public
-// allow admin power
 // demo page with my data
 // switch goal back to target?
 // say `${value}+` for days
 // line opacity 0 at beginning and 1 at recent end?
 // smaller days chart?
-// make home the info and signup page?
-// add demo link to home page
-// user paths
+// add demo link to signup page
 // allow to make public
-// homepage with video background
-// move get cookie?
+// signup page with video background
 // move all strava api management into new repo, other apps will be called by it
 // filter select activities by date
 // change api/activities/post to use body insead of query string
