@@ -1,53 +1,12 @@
-import { headers } from "next/headers";
 import { getCookie } from "./_utils/cookies";
 import { redirect } from "next/navigation";
-import Bars from "@/_components/Bars";
-import { DateTime } from "luxon";
 
 const HomePage = async () => {
-  const now = DateTime.now();
-
   const cookie = await getCookie();
 
-  if (!cookie?.id) {
-    redirect("/signup");
-  }
+  const id = cookie?.id;
 
-  const resolvedHeaders = await headers();
-  const host = resolvedHeaders.get("host");
-  const baseUrl = `http://${host}`;
-
-  const stravaAthleteId = `${cookie.id}`;
-
-  const activitesParams = {
-    strava_athlete_id: stravaAthleteId,
-  };
-  const activitiesQueryString = new URLSearchParams(activitesParams).toString();
-
-  const activitiesResponse = await fetch(
-    `${baseUrl}/api/activities?${activitiesQueryString}`,
-  ).then(async (response) => await response.json());
-
-  const activities = activitiesResponse.data.map(
-    (activity: { [key: string]: string }) =>
-      Object.keys(activity).reduce(
-        (accumulator, key) => {
-          accumulator[
-            key
-              .replace(/[-_ ]+(.)/g, (_, character) => character.toUpperCase())
-              .replace(/^[A-Z]/, (character) => character.toLowerCase())
-          ] = activity[key];
-          return accumulator;
-        },
-        {} as { [key: string]: string },
-      ),
-  );
-
-  return (
-    <main>
-      <Bars now={now} activities={activities} />
-    </main>
-  );
+  redirect(id ? `/people/${id}` : "/signup");
 };
 
 export default HomePage;
