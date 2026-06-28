@@ -3,25 +3,24 @@ import { redirect } from "next/navigation";
 import { DateTime } from "luxon";
 import { Suspense } from "react";
 import Bouncer from "@/_components/Bouncer";
-import { JWTPayload } from "jose";
-import { getCookie } from "../_utils/cookies";
 import { defaultActivitiesPageSize } from "@/app/api/activities/route";
 import { Params } from "@/app/_utils/types";
+import { getCookie } from "@/app/_utils/cookies";
+import { decodeParams } from "@/app/_utils/url";
+import { isAdmin } from "@/app/_utils/isAdmin";
 
 type DataFetchingProps = {
   now: DateTime<true>;
-  cookie: JWTPayload;
+  id: string;
   pageNumber: number;
 };
-const DataFetching = async ({ now, cookie, pageNumber }: DataFetchingProps) => {
+const DataFetching = async ({ now, id, pageNumber }: DataFetchingProps) => {
   const resolvedHeaders = await headers();
   const host = resolvedHeaders.get("host");
   const baseUrl = `http://${host}`;
 
-  const stravaAthleteId = `${cookie.id}`;
-
   const accessTokenParams = {
-    id: stravaAthleteId,
+    id,
   };
   const accessTokenQueryString = new URLSearchParams(
     accessTokenParams,
@@ -45,29 +44,40 @@ const DataFetching = async ({ now, cookie, pageNumber }: DataFetchingProps) => {
   ).then(async (response) => await response.json());
 
   redirect(
-    !activitiesResponse.get.length ||
+    `/people/${id}${
+      !activitiesResponse.get.length ||
       DateTime.fromISO(activitiesResponse.get.reverse()[0].start_date_local) <
         targetLookBackDate
-      ? "/"
-      : `/download?p=${pageNumber + 1}`,
+        ? ""
+        : `/download?p=${pageNumber + 1}`
+    }`,
   );
 };
 
 type DownloadPageProps = {
+  params: Promise<Params>;
   searchParams: Promise<Params>;
 };
 
-const DownloadPage = async ({ searchParams }: DownloadPageProps) => {
+const DownloadPage = async ({ params, searchParams }: DownloadPageProps) => {
   const now = DateTime.now();
 
-  const cookie = await getCookie();
+  const resolvedParams = { ...(await params), ...(await searchParams) };
+  const decodedParams = decodeParams(resolvedParams);
+  const pathId = decodedParams.id;
 
-  if (!cookie?.id) {
+  const cookie = await getCookie();
+  const cookieId = cookie?.id;
+
+  if (
+    !pathId ||
+    !cookieId ||
+    (Number(pathId) !== cookieId && !isAdmin(cookieId))
+  ) {
     redirect("/signup");
   }
 
-  const resolvedParams = await searchParams;
-  const pageNumber = Number(resolvedParams.p || "1");
+  const pageNumber = Number(decodedParams.p || "1");
 
   return (
     <main>
@@ -102,7 +112,7 @@ const DownloadPage = async ({ searchParams }: DownloadPageProps) => {
           </div>
         }
       >
-        <DataFetching now={now} cookie={cookie} pageNumber={pageNumber} />
+        <DataFetching now={now} id={pathId} pageNumber={pageNumber} />
       </Suspense>
     </main>
   );

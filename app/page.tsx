@@ -48,5 +48,3 @@ export default HomePage;
 // make baseurlhelper
 //  render loading thing then redirect https://www.google.com/search?q=react+suspense+fallback+with+progress+state
 // suspense instead of force dynamic on admin page?
-// current flow: redirect to signup page -> authorize -> save token -> set cookie -> download -> display bars on root, webhook to refresh
-// new flow: root is info with signup button -> auth -> download with progress -> display bars on athlete/:id page, webhook to refresh

@@ -1,5 +1,6 @@
 import Bars from "@/_components/Bars";
 import { getCookie } from "@/app/_utils/cookies";
+import { isAdmin } from "@/app/_utils/isAdmin";
 import { Params } from "@/app/_utils/types";
 import { decodeParams } from "@/app/_utils/url";
 import { DateTime } from "luxon";
@@ -20,7 +21,11 @@ const PersonPage = async ({ params }: PersonPageProps) => {
   const cookie = await getCookie();
   const cookieId = cookie?.id;
 
-  if (!pathId || !cookieId || Number(pathId) !== cookieId) {
+  if (
+    !pathId ||
+    !cookieId ||
+    (Number(pathId) !== cookieId && !isAdmin(cookieId))
+  ) {
     redirect("/signup");
   }
 
@@ -29,7 +34,7 @@ const PersonPage = async ({ params }: PersonPageProps) => {
   const baseUrl = `http://${host}`;
 
   const activitesParams = {
-    strava_athlete_id: `${cookieId}`,
+    strava_athlete_id: pathId,
   };
   const activitiesQueryString = new URLSearchParams(activitesParams).toString();
 
