@@ -43,3 +43,12 @@ export default HomePage;
 // make baseurlhelper
 //  render loading thing then redirect https://www.google.com/search?q=react+suspense+fallback+with+progress+state
 // suspense instead of force dynamic on admin page?
+// "thats it"
+// link back to signup if demo
+// connect on linkedin
+// goals are a range?
+// golden line for 10*90mins
+// add name to person page
+// "im weird" button to show more charts
+// login button vs actuall doing auth?
+// make buttons full width even strava connect button

@@ -1,9 +1,14 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { Montserrat } from "next/font/google";
+import { Inter, Montserrat } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 
 export const montserrat = Montserrat({
+  subsets: ["latin"],
+  display: "swap",
+});
+
+export const inter = Inter({
   subsets: ["latin"],
   display: "swap",
 });

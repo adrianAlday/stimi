@@ -3,7 +3,6 @@ import { getCookie } from "@/app/_utils/cookies";
 import { isAdmin } from "@/app/_utils/isAdmin";
 import { Params } from "@/app/_utils/types";
 import { decodeParams } from "@/app/_utils/url";
-import { DateTime } from "luxon";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
@@ -12,8 +11,6 @@ type PersonPageProps = {
 };
 
 const PersonPage = async ({ params }: PersonPageProps) => {
-  const now = DateTime.now();
-
   const resolvedParams = await params;
   const decodedParams = decodeParams(resolvedParams);
   const pathId = decodedParams.id;
@@ -23,8 +20,8 @@ const PersonPage = async ({ params }: PersonPageProps) => {
 
   if (
     !pathId ||
-    !cookieId ||
-    (Number(pathId) !== cookieId && !isAdmin(cookieId))
+    (pathId !== process.env.NEXT_PUBLIC_DEMO_ID &&
+      (!cookieId || (Number(pathId) !== cookieId && !isAdmin(cookieId))))
   ) {
     redirect("/signup");
   }
@@ -59,7 +56,7 @@ const PersonPage = async ({ params }: PersonPageProps) => {
 
   return (
     <main>
-      <Bars now={now} activities={activities} />
+      <Bars activities={activities} />
     </main>
   );
 };

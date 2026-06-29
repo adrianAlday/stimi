@@ -1,3 +1,5 @@
+"use client";
+
 import { DateTime } from "luxon";
 import BarChart, { DataPoint } from "./BarChart";
 import Link from "next/link";
@@ -9,11 +11,12 @@ type Activity = {
 };
 
 type BarsProps = {
-  now: DateTime<true>;
   activities: Activity[];
 };
 
-const Bars = ({ now, activities }: BarsProps) => {
+const Bars = ({ activities }: BarsProps) => {
+  const now = DateTime.now();
+
   const filteredActivities = activities
     .filter((activity) => activity.sportType.includes("Run"))
     .sort((a, b) => a.startDateLocal.localeCompare(b.startDateLocal));
