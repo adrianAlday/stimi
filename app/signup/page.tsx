@@ -54,7 +54,6 @@ const SignupPage = async () => {
               `&redirect_uri=http${isDev ? "" : "s"}://${host}/api/signup` +
               `&state=${referer}`
             }
-            target="_blank"
             className="mt-4 rounded-3xl w-full bg-[rgb(252,82,0)] text-[rgb(255,255,255)] flex items-center justify-center"
             style={buttonHeightStyle}
           >
