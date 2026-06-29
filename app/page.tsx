@@ -53,3 +53,4 @@ export default HomePage;
 // login button vs actuall doing auth?
 // make buttons full width even strava connect button
 // handle if last activity was at a later time than current system now time
+// make goals a range?
