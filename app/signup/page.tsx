@@ -11,67 +11,75 @@ const SignupPage = async () => {
 
   const demoId = process.env.NEXT_PUBLIC_DEMO_ID;
 
-  const buttonSizeStyle = { height: 48, width: 237 };
+  const buttonHeightStyle = { height: 48 };
+  const logoHeight = 18;
 
   return (
     <main>
-      <div className="mx-4 h-dvh flex items-center justify-center">
-        <div className="flex flex-col font-semibold">
-          <div className={"font-black text-[rgb(252,82,0)] text-2xl"}>
-            STiMi
-          </div>
-
-          <div className="mt-4">
-            {"Track just what's important for training."}
-          </div>
+      <div className="h-dvh w-dvw p-4 flex items-center justify-center">
+        <div className="font-semibold">
+          <div>{"See just what's important for training."}</div>
 
           <div className="mt-4">{"It's not that complicated."}</div>
 
-          <div className="flex flex-col items-center justify-center">
-            {demoId && (
-              <Link href={`/people/${demoId}`} target="_blank">
-                <div
-                  className="mt-4 border border-1 border-[rgb(255,255,255)] rounded-md bg-[rgb(20,20,20)] flex items-center justify-center text-[rgb(255,255,255)]"
-                  style={buttonSizeStyle}
-                >
-                  <div className="flex items-baseline pb-[4px]">
-                    <div
-                      className={`mr-[7px] text-[13px] ${inter.className} uppercase tracking-wide`}
-                    >
-                      {"Check out"}
-                    </div>
-
-                    <div
-                      className={"font-black text-[rgb(255,255,255)] text-2xl"}
-                    >
-                      STiMi
-                    </div>
-                  </div>
-                </div>
-              </Link>
-            )}
-
+          {demoId && (
             <Link
-              href={
-                `http://www.strava.com/oauth/mobile/authorize?` +
-                `&response_type=code` +
-                `&client_id=${process.env.NEXT_PUBLIC_STRAVA_CLIENT_ID}` +
-                `&scope=activity:read_all` +
-                `&redirect_uri=http${isDev ? "" : "s"}://${host}/api/signup` +
-                `&state=${referer}`
-              }
-              className="mt-4 relative"
-              style={buttonSizeStyle}
+              href={`/people/${demoId}`}
+              target="_blank"
+              className="mt-4 border border-1 border-[rgb(255,255,255)] rounded-md w-full flex items-center justify-center"
+              style={buttonHeightStyle}
+            >
+              <div
+                className={`mt-[4px] mr-[7px] text-[13px] ${inter.className} uppercase tracking-wide`}
+              >
+                {"Check out"}
+              </div>
+
+              <div
+                className={
+                  "font-black text-[rgb(255,255,255)] text-[20px] leading-[20px]"
+                }
+              >
+                STiMi
+              </div>
+            </Link>
+          )}
+
+          <Link
+            href={
+              `http://www.strava.com/oauth/mobile/authorize?` +
+              `&response_type=code` +
+              `&client_id=${process.env.NEXT_PUBLIC_STRAVA_CLIENT_ID}` +
+              `&scope=activity:read_all` +
+              `&redirect_uri=http${isDev ? "" : "s"}://${host}/api/signup` +
+              `&state=${referer}`
+            }
+            target="_blank"
+            className="mt-4 rounded-md w-full bg-[rgb(252,82,0)] text-[rgb(255,255,255)] flex items-center justify-center"
+            style={buttonHeightStyle}
+          >
+            <div
+              className={`mt-[4px] mr-[7px] text-[13px] ${inter.className} uppercase tracking-wide`}
+            >
+              {"Connect your"}
+            </div>
+
+            <div
+              className="relative"
+              style={{
+                height: logoHeight,
+                width: (432 / 91) * logoHeight,
+              }}
             >
               <Image
-                src={"/connect.svg"}
-                alt={"connect"}
+                src={"/strava.svg"}
+                alt={"strava"}
                 unoptimized={true}
                 preload={true}
                 fill
               />
-            </Link>
-          </div>
+            </div>
+          </Link>
         </div>
       </div>
     </main>

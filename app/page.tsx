@@ -55,3 +55,4 @@ export default HomePage;
 // handle if last activity was at a later time than current system now time
 // make goals a range?
 // add profile name and picture to person page
+// demo mock data instead of real data
