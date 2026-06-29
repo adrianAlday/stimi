@@ -16,7 +16,7 @@ const SignupPage = async () => {
 
   return (
     <main>
-      <div className="h-dvh w-dvw p-4 flex justify-center">
+      <div className="h-dvh w-dvw p-4 flex justify-center overflow-x-auto overflow-y-auto scrollbar-none overscroll-x-none overscroll-y-none">
         <div className="mt-[220px] font-semibold">
           <div>{"See just what's important for training."}</div>
 
