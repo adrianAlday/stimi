@@ -5,6 +5,12 @@ import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
 export const GET = async (request: NextRequest) => {
+  const { code } = Object.fromEntries(request.nextUrl.searchParams.entries());
+
+  if (!code) {
+    return NextResponse.redirect(new URL("/signup", request.url));
+  }
+
   const authorizationCodeResponse = await fetch(
     "https://www.strava.com/api/v3/oauth/token",
     {
@@ -16,7 +22,7 @@ export const GET = async (request: NextRequest) => {
         client_id: Number(process.env.NEXT_PUBLIC_STRAVA_CLIENT_ID),
         client_secret: process.env.STRAVA_CLIENT_SECRET,
         grant_type: "authorization_code",
-        code: Object.fromEntries(request.nextUrl.searchParams.entries()).code,
+        code,
       }),
     },
   ).then(async (response) => await response.json());

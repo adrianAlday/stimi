@@ -56,4 +56,3 @@ export default HomePage;
 // make goals a range?
 // add profile name and picture to person page
 // demo mock data instead of real data
-// handle auth cancel
