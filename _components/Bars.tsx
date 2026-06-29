@@ -178,13 +178,13 @@ const Bars = ({ pathId, profile, activities }: BarsProps) => {
             <Link
               href={`https://www.strava.com/athletes/${pathId}`}
               target="_blank"
+              className="relative size-10"
             >
               <Image
                 src={profile}
                 alt={"profile"}
-                width={40}
-                height={40}
-                className=" rounded-3xl size-10 bg-[rgba(255,255,255,0.33)] p-[1px]"
+                fill
+                className="rounded-3xl bg-[rgba(255,255,255,0.33)] p-[1px]"
               />
             </Link>
           </div>
