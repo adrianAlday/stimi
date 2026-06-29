@@ -42,10 +42,17 @@ export const getActivityReponse = async (options: {
 const selectActivities = async (stravaAthleteId: string) => {
   const supabase = await createClient();
 
-  return await supabase
+  const profile = await supabase
+    .from("strava_athletes")
+    .select("profile")
+    .eq("id", stravaAthleteId);
+
+  const activities = await supabase
     .from("strava_activities")
     .select("sport_type, start_date_local, moving_time")
     .eq("strava_athlete_id", stravaAthleteId);
+
+  return { profile, activities };
 };
 
 export const upsertActivities = async (activities: Activity[]) => {

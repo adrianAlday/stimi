@@ -28,7 +28,7 @@ export const GET = async (request: NextRequest) => {
   ).then(async (response) => await response.json());
 
   const {
-    athlete: { id },
+    athlete: { id, profile },
     scope,
     refresh_token,
   } = authorizationCodeResponse;
@@ -40,6 +40,7 @@ export const GET = async (request: NextRequest) => {
       id,
       scope,
       refresh_token,
+      profile,
     },
     { onConflict: "id" },
   );

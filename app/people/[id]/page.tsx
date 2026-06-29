@@ -39,7 +39,9 @@ const PersonPage = async ({ params }: PersonPageProps) => {
     `${baseUrl}/api/activities?${activitiesQueryString}`,
   ).then(async (response) => await response.json());
 
-  const activities = activitiesResponse.data.map(
+  const { profile } = activitiesResponse.profile.data[0];
+
+  const activities = activitiesResponse.activities.data.map(
     (activity: { [key: string]: string }) =>
       Object.keys(activity).reduce(
         (accumulator, key) => {
@@ -56,7 +58,7 @@ const PersonPage = async ({ params }: PersonPageProps) => {
 
   return (
     <main>
-      <Bars activities={activities} />
+      <Bars pathId={pathId} profile={profile} activities={activities} />
     </main>
   );
 };
