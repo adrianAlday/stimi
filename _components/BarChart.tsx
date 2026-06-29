@@ -131,15 +131,22 @@ const BarChart = ({
           .attr("stroke-dasharray", "4,4"),
       );
 
-    const timeUnit = 700;
+    const timeUnit = 1000;
     // time chunks
-    // 0-1 bar sequential delay
-    // 1-2 bar sequential delay
-    // 2-3 last bar draw
-    // 3-4 finish line draw
-    // 4-5 goal color change
+    // 0-1 scroll and bar sequential delay
+    // 1-2 last bar draw
+    // 2-3 finish line draw
+    // 3-4 goal color change
 
-    const barDrawDelayUnit = (2 * timeUnit) / data.length;
+    const barDrawDelay = 1 * timeUnit;
+    const barDrawDelayUnit = barDrawDelay / data.length;
+    const barDrawDuration = 1 * timeUnit;
+
+    const lineDrawDelay = 0 * timeUnit;
+    const lineDrawDuration = barDrawDelay + barDrawDuration + 1 * timeUnit;
+
+    const goalColorDelay = lineDrawDelay + lineDrawDuration;
+    const goalColorDuration = 1 * timeUnit;
 
     const defs = svg.append("defs");
 
@@ -194,9 +201,9 @@ const BarChart = ({
       .attr("y", innerHeight)
       .attr("height", 0)
       .transition()
-      .duration(timeUnit)
-      .ease(d3.easeCubicOut)
       .delay((_d, index) => index * barDrawDelayUnit)
+      .duration(barDrawDuration)
+      .ease(d3.easeCubicInOut)
       .attr("y", (d) => yScale(d.value))
       .attr("height", (d) => innerHeight - yScale(d.value));
 
@@ -220,8 +227,9 @@ const BarChart = ({
       .attr("stroke-dasharray", totalLength + " " + totalLength)
       .attr("stroke-dashoffset", totalLength)
       .transition()
-      .duration(timeUnit * 4)
-      .ease(d3.easeCubicOut)
+      .delay(lineDrawDelay)
+      .duration(lineDrawDuration)
+      .ease(d3.easeCubicInOut)
       .attr("stroke-dashoffset", 0);
 
     const goalEnd = data[data.length - 1];
@@ -253,8 +261,9 @@ const BarChart = ({
 
     labelGroup
       .transition()
-      .delay(timeUnit * 4)
-      .duration(timeUnit)
+      .delay(goalColorDelay)
+      .duration(goalColorDuration)
+      .ease(d3.easeCubicInOut)
       .attr("opacity", 1);
 
     g.selectAll(".value-label")
@@ -275,9 +284,9 @@ const BarChart = ({
       .attr("font-weight", "600")
       .attr("pointer-events", "none")
       .transition()
-      .duration(timeUnit)
-      .ease(d3.easeCubicOut)
       .delay((_d, index) => index * barDrawDelayUnit)
+      .duration(barDrawDuration)
+      .ease(d3.easeCubicInOut)
       .attr("y", (d) => yScale(d.value) - labelHeightAboveBar)
       .attr("opacity", 1)
       .tween("text", (d) => {
@@ -295,8 +304,10 @@ const BarChart = ({
     g.selectAll(".value-label")
       .filter((_d, index) => index === lastIndex)
       .transition()
-      .delay(timeUnit * 4)
-      .duration(timeUnit)
+      .delay(goalColorDelay)
+      .duration(goalColorDuration)
+      .ease(d3.easeCubicInOut)
+
       .attr("fill", goalMet ? "rgb(15,157,88)" : "rgb(219,68,55)");
 
     g.selectAll(".bar")
@@ -306,9 +317,10 @@ const BarChart = ({
       .select(lastBarGradientIdSelector)
       .selectAll("stop")
       .transition()
-      .delay(timeUnit * 4)
-      .duration(timeUnit)
-      .attr("stop-color", (d, i) =>
+      .delay(goalColorDelay)
+      .duration(goalColorDuration)
+      .ease(d3.easeCubicInOut)
+      .attr("stop-color", (_d, i) =>
         goalMet
           ? i === 0
             ? "rgba(15,157,88, 0.33)"
