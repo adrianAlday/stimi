@@ -23,8 +23,11 @@ const Layout = ({
   children: React.ReactNode;
 }>) => {
   return (
-    <html lang="en" className={`subpixel-antialiased ${montserrat.className}`}>
-      <body>
+    <html
+      lang="en"
+      className={`subpixel-antialiased ${montserrat.className} overflow-x-auto overflow-y-auto scrollbar-none overscroll-x-none overscroll-y-none`}
+    >
+      <body className="overflow-x-auto overflow-y-auto scrollbar-none overscroll-x-none overscroll-y-none">
         {children} <Analytics />
       </body>
     </html>
