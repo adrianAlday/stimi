@@ -34,18 +34,18 @@ const SignupPage = async () => {
                   className="mt-4 border border-1 border-[rgb(255,255,255)] rounded-md bg-[rgb(20,20,20)] flex items-center justify-center text-[rgb(255,255,255)]"
                   style={buttonSizeStyle}
                 >
-                  <div>
-                    <span
+                  <div className="flex items-baseline pb-[4px]">
+                    <div
                       className={`mr-[7px] text-[13px] ${inter.className} uppercase tracking-wide`}
                     >
                       {"Check out"}
-                    </span>
+                    </div>
 
-                    <span
+                    <div
                       className={"font-black text-[rgb(255,255,255)] text-2xl"}
                     >
                       STiMi
-                    </span>
+                    </div>
                   </div>
                 </div>
               </Link>
