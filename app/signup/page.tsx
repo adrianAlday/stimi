@@ -16,8 +16,8 @@ const SignupPage = async () => {
 
   return (
     <main>
-      <div className="h-dvh w-dvw p-4 flex items-center justify-center">
-        <div className="font-semibold">
+      <div className="h-dvh w-dvw p-4 flex justify-center">
+        <div className="mt-[220px] font-semibold">
           <div>{"See just what's important for training."}</div>
 
           <div className="mt-4">{"It's not that complicated."}</div>
@@ -26,7 +26,7 @@ const SignupPage = async () => {
             <Link
               href={`/people/${demoId}`}
               target="_blank"
-              className="mt-4 border border-1 border-[rgb(255,255,255)] rounded-md w-full flex items-center justify-center"
+              className="mt-4 border border-1 border-[rgb(255,255,255)] rounded-3xl w-full flex items-center justify-center"
               style={buttonHeightStyle}
             >
               <div
@@ -55,7 +55,7 @@ const SignupPage = async () => {
               `&state=${referer}`
             }
             target="_blank"
-            className="mt-4 rounded-md w-full bg-[rgb(252,82,0)] text-[rgb(255,255,255)] flex items-center justify-center"
+            className="mt-4 rounded-3xl w-full bg-[rgb(252,82,0)] text-[rgb(255,255,255)] flex items-center justify-center"
             style={buttonHeightStyle}
           >
             <div
