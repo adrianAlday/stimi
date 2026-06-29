@@ -29,14 +29,14 @@ const BarChart = ({
 
   const height =
     48 +
-    24 *
+    20 *
       Math.ceil(
         Math.max(...data.map((dataPoint) => dataPoint.value)) / tickInterval,
       );
   const columnWidth = 48;
   const width = 48 + columnWidth * data.length;
 
-  const margin = { left: 0, top: 32, right: 48, bottom: 8 };
+  const margin = { left: 0, top: 32, right: 48, bottom: 12 };
 
   useEffect(() => {
     if (!svgRef.current || data.length === 0) {

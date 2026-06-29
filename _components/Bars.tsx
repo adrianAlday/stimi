@@ -152,7 +152,7 @@ const Bars = ({ pathId, profile, activities }: BarsProps) => {
 
   return (
     <div
-      className="w-dvw h-dvh overflow-x-auto overflow-y-auto scrollbar-none flex justify-center-safe overscroll-x-none overscroll-y-none overscroll-none"
+      className="w-dvw h-dvh overflow-x-auto overflow-y-auto scrollbar-none flex justify-center-safe overscroll-none"
       id={scrollContainerId}
     >
       <div className="w-max">
