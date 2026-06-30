@@ -57,3 +57,5 @@ export default HomePage;
 // add profile name and picture to person page
 // demo mock data instead of real data
 // show profile picture on downloading page
+// video background by center it, maybe crop video
+// demo page has signup button
