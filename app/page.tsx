@@ -47,3 +47,6 @@ export default HomePage;
 // demo mock data instead of real data
 // show profile picture on downloading page
 // video background by center it, maybe crop video
+// icon color is too light?
+// separate endpoint to get profile pic
+// do access token in same call as activities? reduce to 1 app request?
