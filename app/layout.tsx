@@ -25,9 +25,9 @@ const Layout = ({
   return (
     <html
       lang="en"
-      className={`subpixel-antialiased ${montserrat.className} w-dvw h-dvh overflow-x-auto overflow-y-auto scrollbar-none overscroll-x-none overscroll-y-none`}
+      className={`subpixel-antialiased ${montserrat.className} overflow-hidden`}
     >
-      <body className="w-dvw h-dvh overflow-x-auto overflow-y-auto scrollbar-none overscroll-x-none overscroll-y-none">
+      <body className="overflow-hidden">
         {children} <Analytics />
       </body>
     </html>
