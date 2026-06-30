@@ -4,6 +4,7 @@ import { DateTime } from "luxon";
 import BarChart, { DataPoint } from "./BarChart";
 import Link from "next/link";
 import Image from "next/image";
+import SignupButton from "./SignupButton";
 
 type Activity = {
   sportType: string;
@@ -13,11 +14,12 @@ type Activity = {
 
 type BarsProps = {
   pathId: string;
+  demoUrl?: string;
   profile: string;
   activities: Activity[];
 };
 
-const Bars = ({ pathId, profile, activities }: BarsProps) => {
+const Bars = ({ pathId, demoUrl, profile, activities }: BarsProps) => {
   const now = DateTime.now();
 
   const filteredActivities = activities
@@ -230,7 +232,7 @@ const Bars = ({ pathId, profile, activities }: BarsProps) => {
           </div>
         </div>
 
-        <div className="pb-2">
+        <div className="pb-1">
           <BarChart
             data={daysData}
             title={"Days on"}
@@ -250,6 +252,12 @@ const Bars = ({ pathId, profile, activities }: BarsProps) => {
             valueFormatterType={"toHoursAndMinutes"}
           />
         </div>
+
+        {demoUrl && (
+          <div className="px-4 pb-2 inline-block sticky left-0 bottom-0 w-dvw font-semibold">
+            <SignupButton url={demoUrl} />
+          </div>
+        )}
       </div>
     </div>
   );

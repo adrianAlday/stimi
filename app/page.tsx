@@ -58,4 +58,3 @@ export default HomePage;
 // demo mock data instead of real data
 // show profile picture on downloading page
 // video background by center it, maybe crop video
-// demo page has signup button

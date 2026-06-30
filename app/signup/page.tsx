@@ -1,18 +1,17 @@
 import { headers } from "next/headers";
 import Link from "next/link";
-import { isDev } from "../_utils/isDev";
-import Image from "next/image";
-import { inter } from "../layout";
+import { generateSignupUrl } from "../_utils/url";
+import SignupButton, {
+  inter,
+  signupButtonHeightStyle,
+} from "@/_components/SignupButton";
+
+export const demoParam = "demo";
 
 const SignupPage = async () => {
-  const resolvedHeaders = await headers();
-  const host = resolvedHeaders.get("host");
-  const referer = resolvedHeaders.get("referer");
-
   const demoId = process.env.NEXT_PUBLIC_DEMO_ID;
 
-  const buttonHeightStyle = { height: 48 };
-  const logoHeight = 18;
+  const resolvedHeaders = await headers();
 
   return (
     <main>
@@ -24,10 +23,9 @@ const SignupPage = async () => {
 
           {demoId && (
             <Link
-              href={`/people/${demoId}`}
-              target="_blank"
+              href={`/people/${demoId}?${demoParam}`}
               className="mt-4 border border-1 border-[rgb(255,255,255)] rounded-3xl w-full flex items-center justify-center"
-              style={buttonHeightStyle}
+              style={signupButtonHeightStyle}
             >
               <div
                 className={`mt-[4px] mr-[7px] text-[13px] ${inter.className} uppercase tracking-wide`}
@@ -45,40 +43,10 @@ const SignupPage = async () => {
             </Link>
           )}
 
-          <Link
-            href={
-              `http://www.strava.com/oauth/mobile/authorize?` +
-              `&response_type=code` +
-              `&client_id=${process.env.NEXT_PUBLIC_STRAVA_CLIENT_ID}` +
-              `&scope=activity:read_all` +
-              `&redirect_uri=http${isDev ? "" : "s"}://${host}/api/signup` +
-              `&state=${referer}`
-            }
-            className="mt-4 rounded-3xl w-full bg-[rgb(252,82,0)] text-[rgb(255,255,255)] flex items-center justify-center"
-            style={buttonHeightStyle}
-          >
-            <div
-              className={`mt-[4px] mr-[7px] text-[13px] ${inter.className} uppercase tracking-wide`}
-            >
-              {"Connect your"}
-            </div>
-
-            <div
-              className="relative"
-              style={{
-                height: logoHeight,
-                width: (432 / 91) * logoHeight,
-              }}
-            >
-              <Image
-                src={"/strava.svg"}
-                alt={"strava"}
-                unoptimized={true}
-                preload={true}
-                fill
-              />
-            </div>
-          </Link>
+          <SignupButton
+            url={await generateSignupUrl(resolvedHeaders)}
+            className={"mt-4"}
+          />
         </div>
       </div>
     </main>

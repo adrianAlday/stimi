@@ -2,16 +2,18 @@ import Bars from "@/_components/Bars";
 import { getCookie } from "@/app/_utils/cookies";
 import { isAdmin } from "@/app/_utils/isAdmin";
 import { Params } from "@/app/_utils/types";
-import { decodeParams } from "@/app/_utils/url";
+import { decodeParams, generateSignupUrl } from "@/app/_utils/url";
+import { demoParam } from "@/app/signup/page";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
 type PersonPageProps = {
   params: Promise<Params>;
+  searchParams: Promise<Params>;
 };
 
-const PersonPage = async ({ params }: PersonPageProps) => {
-  const resolvedParams = await params;
+const PersonPage = async ({ params, searchParams }: PersonPageProps) => {
+  const resolvedParams = { ...(await params), ...(await searchParams) };
   const decodedParams = decodeParams(resolvedParams);
   const pathId = decodedParams.id;
 
@@ -39,6 +41,10 @@ const PersonPage = async ({ params }: PersonPageProps) => {
     `${baseUrl}/api/activities?${activitiesQueryString}`,
   ).then(async (response) => await response.json());
 
+  const demoUrl = Object.hasOwn(decodedParams, demoParam)
+    ? generateSignupUrl(resolvedHeaders)
+    : undefined;
+
   const { profile } = activitiesResponse.profile.data[0];
 
   const activities = activitiesResponse.activities.data.map(
@@ -58,7 +64,12 @@ const PersonPage = async ({ params }: PersonPageProps) => {
 
   return (
     <main>
-      <Bars pathId={pathId} profile={profile} activities={activities} />
+      <Bars
+        pathId={pathId}
+        demoUrl={demoUrl}
+        profile={profile}
+        activities={activities}
+      />
     </main>
   );
 };
