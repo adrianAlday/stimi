@@ -254,8 +254,13 @@ const Bars = ({ pathId, demoUrl, profile, activities }: BarsProps) => {
         </div>
 
         {demoUrl && (
-          <div className="px-4 pb-2 inline-block sticky left-0 bottom-0 w-dvw font-semibold">
-            <SignupButton url={demoUrl} />
+          <div className="px-4 pb-2 inline-block sticky left-0 bottom-0 w-dvw">
+            <div className="flex justify-center">
+              <SignupButton
+                url={demoUrl}
+                className="w-[calc(100dvw-2*16px)] max-w-[400px]"
+              />
+            </div>
           </div>
         )}
       </div>

@@ -20,11 +20,11 @@ const SignupButton = ({ url, className }: SignupButtonProps) => {
   return (
     <Link
       href={url}
-      className={`rounded-3xl w-[calc(100dvw-2*16px)] bg-[rgb(252,82,0)] text-[rgb(255,255,255)] flex items-center justify-center ${className}`}
+      className={`rounded-3xl w-full bg-[rgb(252,82,0)] text-[rgb(255,255,255)] flex items-center justify-center ${className}`}
       style={signupButtonHeightStyle}
     >
       <div
-        className={`mt-[4px] mr-[7px] text-[13px] ${inter.className} uppercase tracking-wide`}
+        className={`mt-[4px] mr-[7px] text-[13px] ${inter.className} font-semibold uppercase tracking-wide`}
       >
         {"Connect your"}
       </div>
