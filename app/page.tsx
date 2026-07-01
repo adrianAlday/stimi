@@ -11,17 +11,16 @@ const HomePage = async () => {
 
 export default HomePage;
 
+// make strava auth the callback domain then redirect to stimi
+// month and year dividing lines
+
 // learn from other apps https://www.strava.com/settings/apps
 // loader
 // refresh button?
-// make strava auth the callback domain then redirect to stimi
-// redirect from signup to main page if has cookie
 // admin user browser
-// load more button for more pages?
 // height dependent on data vs ticks?
 // or 280 height, make ticks change to not be crammed?
 // day target is time target divided by 90 rounded up?
-// month and year dividing lines
 // make bars go to that week on strava?
 // get activities from db also filter for after a specific date?
 // allow user to toggle making page public
