@@ -4,8 +4,11 @@ import { isAdmin } from "@/app/_utils/isAdmin";
 import { Params } from "@/app/_utils/types";
 import { decodeParams, generateSignupUrl } from "@/app/_utils/url";
 import { demoParam } from "@/app/signup/page";
+import { DateTime } from "luxon";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
+
+export const weeksToShow = 106;
 
 type PersonPageProps = {
   params: Promise<Params>;
@@ -19,11 +22,12 @@ const PersonPage = async ({ params, searchParams }: PersonPageProps) => {
 
   const cookie = await getCookie();
   const cookieId = cookie?.id;
+  const userIsAdmin = isAdmin(cookieId);
 
   if (
     !pathId ||
     (pathId !== process.env.NEXT_PUBLIC_DEMO_ID &&
-      (!cookieId || (Number(pathId) !== cookieId && !isAdmin(cookieId))))
+      (!cookieId || (Number(pathId) !== cookieId && !userIsAdmin)))
   ) {
     redirect("/signup");
   }
@@ -34,6 +38,11 @@ const PersonPage = async ({ params, searchParams }: PersonPageProps) => {
 
   const activitesParams = {
     strava_athlete_id: pathId,
+    after: userIsAdmin
+      ? decodedParams.after || ""
+      : DateTime.now()
+          .minus({ weeks: weeksToShow + 2 })
+          .toISODate(),
   };
   const activitiesQueryString = new URLSearchParams(activitesParams).toString();
 
@@ -66,6 +75,7 @@ const PersonPage = async ({ params, searchParams }: PersonPageProps) => {
     <main>
       <Bars
         pathId={pathId}
+        userIsAdmin={userIsAdmin}
         demoUrl={demoUrl}
         profile={profile}
         activities={activities}

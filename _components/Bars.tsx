@@ -5,6 +5,7 @@ import BarChart, { DataPoint } from "./BarChart";
 import Link from "next/link";
 import Image from "next/image";
 import SignupButton from "./SignupButton";
+import { weeksToShow } from "@/app/people/[id]/page";
 
 type Activity = {
   sportType: string;
@@ -14,12 +15,19 @@ type Activity = {
 
 type BarsProps = {
   pathId: string;
+  userIsAdmin: boolean;
   demoUrl?: string;
   profile: string;
   activities: Activity[];
 };
 
-const Bars = ({ pathId, demoUrl, profile, activities }: BarsProps) => {
+const Bars = ({
+  pathId,
+  userIsAdmin,
+  demoUrl,
+  profile,
+  activities,
+}: BarsProps) => {
   const now = DateTime.now();
 
   const filteredActivities = activities
@@ -68,7 +76,7 @@ const Bars = ({ pathId, demoUrl, profile, activities }: BarsProps) => {
   const selectedGroups = groupedActivitiesEntries
     .slice(groupedActivitiesEntries.length > 1 ? 1 : 0)
     .reverse()
-    .slice(0, 106)
+    .slice(0, userIsAdmin ? undefined : weeksToShow)
     .reverse();
 
   const years = Object.entries(

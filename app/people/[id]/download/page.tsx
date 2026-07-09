@@ -8,6 +8,7 @@ import { Params } from "@/app/_utils/types";
 import { getCookie } from "@/app/_utils/cookies";
 import { decodeParams } from "@/app/_utils/url";
 import { isAdmin } from "@/app/_utils/isAdmin";
+import { weeksToShow } from "../page";
 
 type DataFetchingProps = {
   now: DateTime<true>;
@@ -29,7 +30,7 @@ const DataFetching = async ({ now, id, pageNumber }: DataFetchingProps) => {
     `${baseUrl}/api/access-token?${accessTokenQueryString}`,
   ).then(async (response) => await response.json());
 
-  const targetLookBackDate = now.minus({ months: 25 });
+  const targetLookBackDate = now.minus({ weeks: weeksToShow + 2 });
 
   const activitesParams = {
     accessToken: accessTokenResponse.access_token,

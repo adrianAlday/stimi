@@ -3,5 +3,5 @@ export const isAdmin = (id: unknown) => {
     .split(", ")
     .map((string) => Number(string));
 
-  return id && adminIdAllowlist && adminIdAllowlist.includes(Number(id));
+  return !!id && adminIdAllowlist && adminIdAllowlist.includes(Number(id));
 };

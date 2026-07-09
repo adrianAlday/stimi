@@ -39,18 +39,27 @@ export const getActivityReponse = async (options: {
   }).then(async (response) => await response.json())) as Activity;
 };
 
-const selectActivities = async (stravaAthleteId: string) => {
+type selectActivitiesProps = {
+  strava_athlete_id: string;
+  after: string;
+};
+
+const selectActivities = async ({
+  strava_athlete_id,
+  after,
+}: selectActivitiesProps) => {
   const supabase = await createClient();
 
   const profile = await supabase
     .from("strava_athletes")
     .select("profile")
-    .eq("id", stravaAthleteId);
+    .eq("id", strava_athlete_id);
 
   const activities = await supabase
     .from("strava_activities")
     .select("sport_type, start_date_local, moving_time")
-    .eq("strava_athlete_id", stravaAthleteId);
+    .eq("strava_athlete_id", strava_athlete_id)
+    .gte("start_date_local", after || "2001-01-01");
 
   return { profile, activities };
 };
@@ -95,8 +104,9 @@ export const POST = async (request: NextRequest) => {
 export const GET = async (request: NextRequest) => {
   return NextResponse.json(
     await selectActivities(
-      Object.fromEntries(request.nextUrl.searchParams.entries())
-        .strava_athlete_id,
+      Object.fromEntries(
+        request.nextUrl.searchParams.entries(),
+      ) as selectActivitiesProps,
     ),
   );
 };
