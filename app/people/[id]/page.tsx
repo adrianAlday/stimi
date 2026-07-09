@@ -1,5 +1,6 @@
 import Bars from "@/_components/Bars";
 import { getCookie } from "@/app/_utils/cookies";
+import { weeksToShow } from "@/app/_utils/data";
 import { isAdmin } from "@/app/_utils/isAdmin";
 import { Params } from "@/app/_utils/types";
 import { decodeParams, generateSignupUrl } from "@/app/_utils/url";
@@ -7,8 +8,6 @@ import { demoParam } from "@/app/signup/page";
 import { DateTime } from "luxon";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
-
-export const weeksToShow = 106;
 
 type PersonPageProps = {
   params: Promise<Params>;

@@ -5,7 +5,7 @@ import BarChart, { DataPoint } from "./BarChart";
 import Link from "next/link";
 import Image from "next/image";
 import SignupButton from "./SignupButton";
-import { weeksToShow } from "@/app/people/[id]/page";
+import { weeksToShow } from "@/app/_utils/data";
 
 type Activity = {
   sportType: string;

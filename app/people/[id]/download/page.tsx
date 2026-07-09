@@ -8,7 +8,7 @@ import { Params } from "@/app/_utils/types";
 import { getCookie } from "@/app/_utils/cookies";
 import { decodeParams } from "@/app/_utils/url";
 import { isAdmin } from "@/app/_utils/isAdmin";
-import { weeksToShow } from "../page";
+import { weeksToShow } from "@/app/_utils/data";
 
 type DataFetchingProps = {
   now: DateTime<true>;
