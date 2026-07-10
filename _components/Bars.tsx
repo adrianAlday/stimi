@@ -156,6 +156,31 @@ const Bars = ({
       };
     });
 
+  const longData = selectedGroups
+    .map(([week, activities]) => ({
+      ...getLabels(week),
+      value: Math.floor(
+        Math.max(0, ...activities.map((activity) => activity.movingTime)) / 60,
+      ),
+    }))
+    .reduce((accumulator, week, index) => {
+      const previousWeeks = accumulator.toReversed().slice(0, weeksToLookBack);
+      const lastWeek = previousWeeks[0];
+
+      const goalValue =
+        index === 0
+          ? timeGoalRamp
+          : lastWeek.value >= lastWeek.goalValue
+            ? lastWeek.goalValue + timeGoalRamp
+            : previousWeeks.every(
+                  (previousWeek) => previousWeek.value < previousWeek.goalValue,
+                )
+              ? Math.max(lastWeek.goalValue - timeGoalRamp, timeGoalRamp)
+              : lastWeek.goalValue;
+
+      return [...accumulator, { ...week, goalValue }];
+    }, [] as DataPoint[]);
+
   const columnWidth = 47.93;
 
   const scrollContainerId = "scroll";
@@ -247,12 +272,26 @@ const Bars = ({
             tickInterval={1}
             scrollContainerId={scrollContainerId}
           />
+
           <BarChart
             data={timeData}
             title={"Time moving"}
             tickInterval={
               (Math.floor(
                 Math.max(...timeData.map((dataPoint) => dataPoint.value)) /
+                  7 /
+                  30,
+              ) || 1) * 30
+            }
+            valueFormatterType={"toHoursAndMinutes"}
+          />
+
+          <BarChart
+            data={longData}
+            title={"Longest day"}
+            tickInterval={
+              (Math.floor(
+                Math.max(...longData.map((dataPoint) => dataPoint.value)) /
                   7 /
                   30,
               ) || 1) * 30

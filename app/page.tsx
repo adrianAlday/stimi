@@ -49,3 +49,5 @@ export default HomePage;
 // icon color is too light?
 // separate endpoint to get profile pic
 // do access token in same call as activities? reduce to 1 app request?
+// dry bar chart time goal logic
+// dry bar chart time tickInterval logic
