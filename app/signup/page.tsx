@@ -27,20 +27,25 @@ const SignupPage = async () => {
               className="mt-4 border border-1 border-[rgb(255,255,255)] rounded-3xl w-full flex items-center justify-center"
               style={signupButtonHeightStyle}
             >
-              <div
+              {/* <div
                 className={`mt-[4px] mr-[7px] text-[13px] ${inter.className} uppercase tracking-wide`}
               >
-                {/* {"Check out"} */}
-                {"Check out Stimi"}
+                {"Check out"}
               </div>
 
-              {/* <div
+              <div
                 className={
                   "font-black text-[rgb(255,255,255)] text-[20px] leading-[20px]"
                 }
               >
                 STiMi
               </div> */}
+
+              <div
+                className={`mt-[0px] mr-[7px] text-[13px] ${inter.className} uppercase tracking-wide`}
+              >
+                {"Check out Stimi"}
+              </div>
             </Link>
           )}
 
