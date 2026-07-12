@@ -196,10 +196,14 @@ const Bars = ({
         <div className="my-3 px-4 inline-block sticky left-0 w-dvw font-semibold">
           <div className="flex items-center">
             <Link href={"/"}>
-              {/* <div className={"font-black text-[rgb(252,82,0)] text-2xl"}>
+              <div
+                className={
+                  // "font-black text-[rgb(252,82,0)] text-2xl"
+                  "font-black text-[rgb(66,133,244)] text-2xl"
+                }
+              >
                 STiMi
-              </div> */}
-              <div className={"text-[rgb(66,133,244)]"}>Stimi</div>
+              </div>
             </Link>
             {/* <svg
               viewBox="0 0 24 24"
