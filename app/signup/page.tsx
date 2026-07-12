@@ -19,7 +19,7 @@ const SignupPage = async () => {
         <div className="mt-[220px] font-semibold">
           <div>{"See just what's important for training."}</div>
 
-          <div className="mt-4">{"It's not that complicated."}</div>
+          {/* <div className="mt-4">{"It's not that complicated."}</div> */}
 
           {demoId && (
             <Link
@@ -30,16 +30,17 @@ const SignupPage = async () => {
               <div
                 className={`mt-[4px] mr-[7px] text-[13px] ${inter.className} uppercase tracking-wide`}
               >
-                {"Check out"}
+                {/* {"Check out"} */}
+                {"Check out Stimi"}
               </div>
 
-              <div
+              {/* <div
                 className={
                   "font-black text-[rgb(255,255,255)] text-[20px] leading-[20px]"
                 }
               >
                 STiMi
-              </div>
+              </div> */}
             </Link>
           )}
 

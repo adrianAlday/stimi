@@ -26,7 +26,8 @@ const SignupButton = ({ url, className }: SignupButtonProps) => {
       <div
         className={`mt-[4px] mr-[7px] text-[13px] ${inter.className} font-semibold uppercase tracking-wide`}
       >
-        {"Connect your"}
+        {/* {"Connect your"} */}
+        {"Connect with"}
       </div>
 
       <div
