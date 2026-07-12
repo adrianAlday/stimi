@@ -143,10 +143,11 @@ const BarChart = ({
 
     const defs = svg.append("defs");
 
-    // const barColor = "252, 82, 0";
+    // const barBaseColor = "252, 82, 0";
     const barBaseColor = "66, 133, 244";
-    const barTopColor = `rgba(${barBaseColor}, 1.0)`;
-    const barBottomColor = `rgba(${barBaseColor}, 0.33)`;
+    const lastBarBaseColor = "244, 180, 0";
+    const barBottomColor = (baseColor: string) => `rgba(${baseColor}, 0.33)`;
+    const barTopColor = (baseColor: string) => `rgba(${baseColor}, 1.00)`;
 
     const orangeBarGradient = defs
       .append("linearGradient")
@@ -158,11 +159,11 @@ const BarChart = ({
     orangeBarGradient
       .append("stop")
       .attr("offset", "0%")
-      .attr("stop-color", barBottomColor);
+      .attr("stop-color", barBottomColor(barBaseColor));
     orangeBarGradient
       .append("stop")
       .attr("offset", "100%")
-      .attr("stop-color", barTopColor);
+      .attr("stop-color", barTopColor(barBaseColor));
 
     const lastBarGradientId = `${title
       .replace(/([a-z])([A-Z])/g, "$1-$2")
@@ -179,11 +180,11 @@ const BarChart = ({
     lastBarGradient
       .append("stop")
       .attr("offset", "0%")
-      .attr("stop-color", barBottomColor);
+      .attr("stop-color", barBottomColor(lastBarBaseColor));
     lastBarGradient
       .append("stop")
       .attr("offset", "100%")
-      .attr("stop-color", barTopColor);
+      .attr("stop-color", barTopColor(lastBarBaseColor));
 
     g.selectAll(".bar")
       .data(data)
