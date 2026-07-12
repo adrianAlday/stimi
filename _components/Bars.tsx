@@ -193,7 +193,7 @@ const Bars = ({
       id={scrollContainerId}
     >
       <div className="w-max">
-        <div className="my-3 px-4 inline-block sticky left-0 w-dvw font-semibold">
+        <div className="mt-3 pb-2 px-4 inline-block sticky left-0 w-dvw font-semibold">
           <div className="flex items-center">
             <Link href={"/"}>
               <div
@@ -238,7 +238,7 @@ const Bars = ({
           </div>
         </div>
 
-        <div className="z-2 px-4 sticky top-0 bg-[rgb(20,20,20)]">
+        <div className="z-2 py-1 px-4 sticky top-0 bg-[rgb(20,20,20)]">
           <div className="opacity-33 font-semibold">
             <div
               className="flex"
@@ -278,7 +278,7 @@ const Bars = ({
           </div>
         </div>
 
-        <div className="pb-1">
+        <div className="-my-1 pb-1">
           <BarChart
             data={daysData}
             title={"Days on"}

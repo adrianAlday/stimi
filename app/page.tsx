@@ -51,3 +51,4 @@ export default HomePage;
 // do access token in same call as activities? reduce to 1 app request?
 // dry bar chart time goal logic
 // dry bar chart time tickInterval logic
+// contact page
