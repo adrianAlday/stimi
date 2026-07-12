@@ -282,7 +282,8 @@ const Bars = ({
           <BarChart
             data={daysData}
             title={"Days on"}
-            tickInterval={1}
+            tickInterval={2}
+            yMax={7}
             scrollContainerId={scrollContainerId}
           />
 

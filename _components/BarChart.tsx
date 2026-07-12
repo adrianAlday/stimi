@@ -14,16 +14,18 @@ type BarChartProps = {
   title: string;
   data: DataPoint[];
   tickInterval: number;
-  valueFormatterType?: string;
+  yMax?: number;
   scrollContainerId?: string;
+  valueFormatterType?: string;
 };
 
 const BarChart = ({
   title,
   data,
   tickInterval,
-  valueFormatterType,
+  yMax = Infinity,
   scrollContainerId,
+  valueFormatterType,
 }: BarChartProps) => {
   const svgRef = useRef<SVGSVGElement | null>(null);
 
@@ -59,7 +61,7 @@ const BarChart = ({
 
     const yScale = d3
       .scaleLinear()
-      .domain([0, Math.min(Math.ceil(maxValue / tickInterval) * tickInterval)])
+      .domain([0, Math.ceil(maxValue / tickInterval) * tickInterval])
       .range([innerHeight, 0]);
 
     const xAxis = d3
@@ -93,7 +95,11 @@ const BarChart = ({
     const yAxis = d3
       .axisRight(yScale)
       .tickSize(0)
-      .tickValues(d3.range(0, maxValue + tickInterval, tickInterval))
+      .tickValues(
+        d3
+          .range(0, maxValue + tickInterval, tickInterval)
+          .filter((d) => d <= yMax),
+      )
       .tickFormat((d) => valueFormatter(Number(d)));
     g.append("g")
       .attr("transform", `translate(${innerWidth}, 0)`)
@@ -111,7 +117,9 @@ const BarChart = ({
     const yAxisGrid = d3
       .axisLeft(yScale)
       .tickSize(-innerWidth)
-      .tickValues(d3.range(0, maxValue + tickInterval, tickInterval));
+      .tickValues(
+        d3.range(0, Math.min(maxValue + tickInterval, yMax), tickInterval),
+      );
     g.append("g")
       .attr("class", "grid-lines")
       .call(yAxisGrid)
