@@ -199,7 +199,7 @@ const Bars = ({
               {/* <div className={"font-black text-[rgb(252,82,0)] text-2xl"}>
                 STiMi
               </div> */}
-              <div className={"text-[rgb(0,82,252)]"}>Stimi</div>
+              <div className={"text-[rgb(66,133,244)]"}>Stimi</div>
             </Link>
             {/* <svg
               viewBox="0 0 24 24"
