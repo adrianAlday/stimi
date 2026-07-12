@@ -288,8 +288,14 @@ const Bars = ({
             title={"Time moving"}
             tickInterval={
               (Math.floor(
-                Math.max(...timeData.map((dataPoint) => dataPoint.value)) /
+                Math.max(
+                  ...timeData.flatMap((dataPoint) => [
+                    dataPoint.value,
+                    dataPoint.goalValue,
+                  ]),
+                ) /
                   7 /
+                  1.5 /
                   30,
               ) || 1) * 30
             }
@@ -301,7 +307,12 @@ const Bars = ({
             title={"Longest day"}
             tickInterval={
               (Math.floor(
-                Math.max(...longData.map((dataPoint) => dataPoint.value)) /
+                Math.max(
+                  ...longData.flatMap((dataPoint) => [
+                    dataPoint.value,
+                    dataPoint.goalValue,
+                  ]),
+                ) /
                   7 /
                   30,
               ) || 1) * 30
