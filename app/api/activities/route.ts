@@ -91,9 +91,14 @@ export const deleteActivity = async (activityId: string) => {
 };
 
 export const POST = async (request: NextRequest) => {
-  const activitiesResponse = await getActivitiesReponse(
+  const rawActivitiesResponse = await getActivitiesReponse(
     Object.fromEntries(request.nextUrl.searchParams.entries()),
   );
+  const activitiesResponse = (
+    rawActivitiesResponse as unknown as { errors: unknown }
+  ).errors
+    ? []
+    : rawActivitiesResponse;
 
   return NextResponse.json({
     get: activitiesResponse,

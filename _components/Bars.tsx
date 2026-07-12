@@ -49,11 +49,13 @@ const Bars = ({
   const groupedActivities = {} as {
     [key: string]: Activity[];
   };
-  const lastWeekString = now.startOf("week").toISODate();
-  const firstWeek = DateTime.fromISO(
-    processedActivities[0].startOfWeek || lastWeekString,
+  const lastWeek = now.startOf("week");
+  const firstWeek = DateTime.min(
+    lastWeek.minus({ weeks: weeksToShow }),
+    ...(processedActivities[0]
+      ? [DateTime.fromISO(processedActivities[0].startOfWeek)]
+      : []),
   );
-  const lastWeek = DateTime.fromISO(lastWeekString);
   const weeks = [firstWeek];
   for (let i = 0; ; i++) {
     const newWeek = weeks.toReversed()[0].plus({ weeks: 1 });
@@ -181,7 +183,7 @@ const Bars = ({
       return [...accumulator, { ...week, goalValue }];
     }, [] as DataPoint[]);
 
-  const columnWidth = 47.93;
+  const columnWidth = 48 - (48 * 0.2) / selectedGroups.length;
 
   const scrollContainerId = "scroll";
 

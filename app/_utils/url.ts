@@ -24,7 +24,7 @@ export const generateSignupUrl = (resolvedHeaders: ReadonlyHeaders) => {
     `http://www.strava.com/oauth/mobile/authorize?` +
     `&response_type=code` +
     `&client_id=${process.env.NEXT_PUBLIC_STRAVA_CLIENT_ID}` +
-    `&scope=activity:read_all` +
+    `&scope=activity:read,activity:read_all` +
     `&redirect_uri=http${isDev ? "" : "s"}://${host}/api/signup` +
     `&state=${referer}`
   );

@@ -27,16 +27,13 @@ const BarChart = ({
 }: BarChartProps) => {
   const svgRef = useRef<SVGSVGElement | null>(null);
 
-  const height =
-    48 +
-    20 *
-      Math.ceil(
-        Math.max(...data.map((dataPoint) => dataPoint.value)) / tickInterval,
-      );
+  const maxValue = Math.max(...data.flatMap((d) => [d.value, d.goalValue]));
+
+  const height = 48 + 20 * Math.ceil(maxValue / tickInterval);
   const columnWidth = 48;
   const width = 48 + columnWidth * data.length;
 
-  const margin = { left: 0, top: 32, right: 48, bottom: 12 };
+  const margin = { left: 0, top: 40, right: 48, bottom: 12 };
 
   useEffect(() => {
     if (!svgRef.current || data.length === 0) {
@@ -59,10 +56,6 @@ const BarChart = ({
       .domain(data.map((d) => d.labelValue))
       .range([0, innerWidth])
       .padding(20 / 100);
-
-    const maxValue = Math.max(
-      ...data.map((d) => Math.max(d.value, d.goalValue)),
-    );
 
     const yScale = d3
       .scaleLinear()

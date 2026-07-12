@@ -5,9 +5,11 @@ import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
 export const GET = async (request: NextRequest) => {
-  const { code } = Object.fromEntries(request.nextUrl.searchParams.entries());
+  const { code, scope } = Object.fromEntries(
+    request.nextUrl.searchParams.entries(),
+  );
 
-  if (!code) {
+  if (!code || !scope.includes("activity:read")) {
     return NextResponse.redirect(new URL("/signup", request.url));
   }
 
@@ -29,7 +31,6 @@ export const GET = async (request: NextRequest) => {
 
   const {
     athlete: { id, profile },
-    scope,
     refresh_token,
   } = authorizationCodeResponse;
 
