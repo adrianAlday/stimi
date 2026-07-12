@@ -144,7 +144,7 @@ const BarChart = ({
     const defs = svg.append("defs");
 
     // const barColor = "252, 82, 0";
-    const barBaseColor = "0, 82, 252";
+    const barBaseColor = "66, 133, 244";
     const barTopColor = `rgba(${barBaseColor}, 1.0)`;
     const barBottomColor = `rgba(${barBaseColor}, 0.33)`;
 
