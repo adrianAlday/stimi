@@ -85,6 +85,7 @@ const MessageForm = ({ cookieId }: MessageFormProps) => {
           }}
           enterKeyHint="send"
           onKeyDown={handleInputKeyDown}
+          autoFocus
           className={
             "mt-3 border border-2 border-[rgba(255,255,255,0.33)] focus:border-[rgb(66,133,244)] rounded-md w-full p-3 resize-none"
           }
