@@ -76,7 +76,7 @@ const MessageForm = ({ cookieId }: MessageFormProps) => {
         <textarea
           ref={textAreaRef}
           rows={1}
-          placeholder={"Thoughts, questions, requests"}
+          placeholder={"Thoughts, questions, suggestions"}
           value={message}
           onChange={(event: React.ChangeEvent<HTMLTextAreaElement>) => {
             setMessage(event.target.value);
