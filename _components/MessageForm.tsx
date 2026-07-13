@@ -57,7 +57,9 @@ const MessageForm = ({ cookieId }: MessageFormProps) => {
   const handleSubmit = (event: React.MouseEvent<HTMLDivElement>) => {
     event.preventDefault();
 
-    submit();
+    if (message) {
+      submit();
+    }
   };
 
   const handleInputKeyDown = (event: React.KeyboardEvent) => {
@@ -89,9 +91,7 @@ const MessageForm = ({ cookieId }: MessageFormProps) => {
         />
 
         <div
-          className={
-            "mt-4 rounded-md w-full bg-[rgb(66,133,244)] text-[rgb(255,255,255)] p-3 flex items-center justify-center cursor-pointer"
-          }
+          className={`mt-4 rounded-md w-full bg-[rgb(66,133,244)] text-[rgb(255,255,255)] p-3 flex items-center justify-center ${message ? "cursor-pointer opacity-100" : "opacity-33"} transition-all duration-80 transition-discrete`}
           onClick={handleSubmit}
         >
           <div>
