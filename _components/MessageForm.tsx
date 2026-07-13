@@ -73,7 +73,7 @@ const MessageForm = ({ cookieId }: MessageFormProps) => {
   return (
     <div className="h-dvh w-dvw p-4 flex justify-center items-end">
       <div className="w-full max-w-[600px] font-semibold">
-        <div>Send a message</div>
+        <div>Send a message!</div>
 
         <textarea
           ref={textAreaRef}
@@ -86,12 +86,12 @@ const MessageForm = ({ cookieId }: MessageFormProps) => {
           enterKeyHint="send"
           onKeyDown={handleInputKeyDown}
           className={
-            "mt-4 border border-2 border-[rgba(255,255,255,0.33)] focus:border-[rgb(66,133,244)] rounded-md w-full p-3 resize-none"
+            "mt-3 border border-2 border-[rgba(255,255,255,0.33)] focus:border-[rgb(66,133,244)] rounded-md w-full p-3 resize-none"
           }
         />
 
         <div
-          className={`mt-4 rounded-md w-full bg-[rgb(66,133,244)] text-[rgb(255,255,255)] p-3 flex items-center justify-center ${message ? "cursor-pointer opacity-100" : "opacity-33"} transition-all duration-80 transition-discrete`}
+          className={`mt-3 rounded-md w-full bg-[rgb(66,133,244)] text-[rgb(255,255,255)] p-3 flex items-center justify-center ${message ? "cursor-pointer opacity-100" : "opacity-33"} transition-all duration-80 transition-discrete`}
           onClick={handleSubmit}
         >
           <div>
