@@ -1,13 +1,19 @@
 import { createClient } from "@/app/_utils/supabase/server";
 import { NextRequest, NextResponse } from "next/server";
 
-export const getAccessTokenResponse = async (id: string) => {
+export const getRefreshTokenResponse = async (id: string) => {
   const supabase = await createClient();
 
   const refreshTokenResponse = await supabase
     .from("strava_athletes")
     .select("refresh_token")
     .eq("id", id);
+
+  return refreshTokenResponse;
+};
+
+export const getAccessTokenResponse = async (id: string) => {
+  const refreshTokenResponse = await getRefreshTokenResponse(id);
 
   if (refreshTokenResponse.success) {
     return await fetch("https://www.strava.com/api/v3/oauth/token", {
