@@ -57,5 +57,4 @@ export default HomePage;
 // check auth on api routes
 // messages back button?
 // download override date param
-// admin link panel
 // add names to athletes table?
