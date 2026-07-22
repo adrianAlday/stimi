@@ -2,35 +2,43 @@
 
 const AdminPanel = () => {
   const postSubscription = async () => {
-    await fetch("/api/subscribe", {
+    const response = await fetch("/api/subscribe", {
       method: "POST",
     }).then(async (response) => await response.json());
+
+    console.log(response);
   };
 
   const getSubscription = async () => {
-    await fetch("/api/subscribe").then(
+    const response = await fetch("/api/subscribe").then(
       async (response) => await response.json(),
     );
+
+    console.log(response);
   };
 
   const deleteSubscription = async () => {
-    await fetch(`/api/subscribe`, {
+    const response = await fetch(`/api/subscribe`, {
       method: "DELETE",
     }).then(async (response) => await response.json());
+
+    console.log(response);
   };
 
   return (
     <div>
+      <div>webhook subscription</div>
+
       <div>
-        <button onClick={postSubscription}>post subscription</button>
+        <button onClick={postSubscription}>post</button>
       </div>
 
       <div>
-        <button onClick={getSubscription}>get subscription</button>
+        <button onClick={getSubscription}>get</button>
       </div>
 
       <div>
-        <button onClick={deleteSubscription}>delete subscription</button>
+        <button onClick={deleteSubscription}>delete</button>
       </div>
     </div>
   );

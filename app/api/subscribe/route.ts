@@ -1,8 +1,9 @@
+import { withAuth } from "@/app/_utils/withAuth";
 import { NextResponse } from "next/server";
 
 export const pushApiUrl = "https://www.strava.com/api/v3/push_subscriptions";
 
-export const POST = async () => {
+export const POST = withAuth(async () => {
   const subscribeReponse = await fetch(pushApiUrl, {
     method: "POST",
     headers: {
@@ -17,7 +18,7 @@ export const POST = async () => {
   }).then(async (response) => await response.json());
 
   return NextResponse.json(subscribeReponse);
-};
+});
 
 const getSubscriptionResponse = async () => {
   const params = {
@@ -31,11 +32,11 @@ const getSubscriptionResponse = async () => {
   );
 };
 
-export const GET = async () => {
+export const GET = withAuth(async () => {
   return NextResponse.json(await getSubscriptionResponse());
-};
+});
 
-export const DELETE = async () => {
+export const DELETE = withAuth(async () => {
   const subscriptionResponse = await getSubscriptionResponse();
 
   const params = {
@@ -52,4 +53,4 @@ export const DELETE = async () => {
   );
 
   return NextResponse.json(deleteResponse);
-};
+});
