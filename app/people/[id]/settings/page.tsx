@@ -17,20 +17,17 @@ const SettingsPage = async ({ params, searchParams }: SettingsPageProps) => {
 
   const cookie = await getCookie();
   const cookieId = cookie?.id;
+  const userIsAdmin = isAdmin(cookieId);
 
-  if (
-    !pathId ||
-    !cookieId ||
-    (Number(pathId) !== cookieId && !isAdmin(cookieId))
-  ) {
-    redirect("/signup");
+  if (pathId && cookieId && (Number(pathId) === cookieId || userIsAdmin)) {
+    return (
+      <main>
+        <SettingsPanel pathId={pathId} userIsAdmin={userIsAdmin} />
+      </main>
+    );
   }
 
-  return (
-    <main>
-      <SettingsPanel pathId={pathId} />
-    </main>
-  );
+  redirect("/signup");
 };
 
 export default SettingsPage;
