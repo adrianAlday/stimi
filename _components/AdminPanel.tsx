@@ -4,7 +4,9 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 
 const AdminPanel = () => {
-  const [ids, setIds] = useState([] as number[]);
+  const [people, setPeople] = useState(
+    [] as { [key: string]: number | string }[],
+  );
 
   useEffect(() => {
     const getIds = async () => {
@@ -12,9 +14,7 @@ const AdminPanel = () => {
         async (response) => await response.json(),
       );
 
-      setIds(
-        response.data.map((record: { [key: string]: number }) => record.id),
-      );
+      setPeople(response.data);
 
       return response;
     };
@@ -48,29 +48,16 @@ const AdminPanel = () => {
 
   return (
     <div className="p-4">
-      <div className="my-4">people ({ids.length})</div>
+      <div className="my-4">people ({people.length})</div>
 
-      {ids.length === 0 ? (
+      {people.length === 0 ? (
         <div>...</div>
       ) : (
-        ids.map((id) => (
-          <div key={id}>
-            <div>{id}</div>
-
-            <div>
-              <Link
-                href={`https://www.strava.com/athletes/${id}`}
-                target="_blank"
-              >
-                strava
-              </Link>
-            </div>
-
-            <div>
-              <Link href={`/people/${id}`} target="_blank">
-                stimi
-              </Link>
-            </div>
+        people.map((person) => (
+          <div key={person.id}>
+            <Link href={`/people/${person.id}`} target="_blank">
+              {person.name} - {person.id}
+            </Link>
           </div>
         ))
       )}

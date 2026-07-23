@@ -3,10 +3,14 @@ import { isAdmin } from "@/app/_utils/isAdmin";
 import { Params } from "@/app/_utils/types";
 import { decodeParams } from "@/app/_utils/url";
 import { NextRequest, NextResponse } from "next/server";
-import { getRefreshTokenResponse } from "../../access-token/route";
+import {
+  getAccessTokenResponse,
+  getRefreshTokenResponse,
+} from "../../access-token/route";
 import { createClient } from "@/app/_utils/supabase/server";
 import { cookies } from "next/headers";
 import { cookieName } from "@/app/_utils/cookieName";
+import { withAuth } from "@/app/_utils/withAuth";
 
 export const DELETE = async (
   _request: NextRequest,
@@ -65,3 +69,23 @@ export const DELETE = async (
     }
   }
 };
+
+export const GET = withAuth(async (_request, { params }) => {
+  const resolvedParams = await params;
+  const decodedParams = decodeParams(resolvedParams);
+  const pathId = decodedParams.id;
+
+  const accessTokenResponse = await getAccessTokenResponse(pathId);
+
+  const athleteResponse = await fetch(
+    `${"https://www.strava.com/api/v3"}/athlete`,
+    {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${accessTokenResponse.access_token}`,
+      },
+    },
+  ).then(async (response) => await response.json());
+
+  return NextResponse.json(athleteResponse);
+});

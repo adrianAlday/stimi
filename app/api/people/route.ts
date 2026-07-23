@@ -5,7 +5,10 @@ import { NextResponse } from "next/server";
 export const GET = withAuth(async () => {
   const supabase = await createClient();
 
-  const idResponse = await supabase.from("strava_athletes").select("id");
+  const idResponse = await supabase
+    .from("strava_athletes")
+    .select("id, name")
+    .order("name");
 
   return NextResponse.json(idResponse);
 });
