@@ -47,8 +47,8 @@ const AdminPanel = () => {
   };
 
   return (
-    <div className="p-4">
-      <div className="my-4">people ({people.length})</div>
+    <div className="p-4 font-semibold lowercase">
+      <div className="my-4">connected people ({people.length})</div>
 
       {people.length === 0 ? (
         <div>...</div>
