@@ -55,9 +55,22 @@ const AdminPanel = () => {
       ) : (
         ids.map((id) => (
           <div key={id}>
-            <Link href={`/people/${id}`} target="_blank">
-              {id}
-            </Link>
+            <div>{id}</div>
+
+            <div>
+              <Link
+                href={`https://www.strava.com/athletes/${id}`}
+                target="_blank"
+              >
+                strava
+              </Link>
+            </div>
+
+            <div>
+              <Link href={`/people/${id}`} target="_blank">
+                stimi
+              </Link>
+            </div>
           </div>
         ))
       )}
