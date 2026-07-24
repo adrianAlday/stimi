@@ -15,14 +15,20 @@ export const withAuth =
   async (request: NextRequest, context: { params: Promise<Params> }) => {
     const cookie = await getCookie();
     const cookieId = cookie?.id;
+
     const userIsAdmin = isAdmin(cookieId);
 
     const decodedParams = matchableParamKeys.length
-      ? decodeParams(await context.params)
+      ? decodeParams({
+          ...Object.fromEntries(request.nextUrl.searchParams),
+          ...(await context.params),
+        })
       : {};
-    const userMatchesParam = matchableParamKeys
-      .map((matchableParamKey) => Number(decodedParams[matchableParamKey]))
-      .includes(Number(cookieId));
+    const userMatchesParam =
+      Number(cookieId) &&
+      matchableParamKeys
+        .map((matchableParamKey) => Number(decodedParams[matchableParamKey]))
+        .includes(Number(cookieId));
 
     return userIsAdmin || userMatchesParam
       ? await handler(request, context)

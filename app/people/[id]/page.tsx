@@ -6,7 +6,7 @@ import { Params } from "@/app/_utils/types";
 import { decodeParams, generateSignupUrl } from "@/app/_utils/url";
 import { demoParam } from "@/app/signup/page";
 import { DateTime } from "luxon";
-import { headers } from "next/headers";
+import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
 
 type PersonPageProps = {
@@ -47,6 +47,7 @@ const PersonPage = async ({ params, searchParams }: PersonPageProps) => {
 
   const activitiesResponse = await fetch(
     `${baseUrl}/api/activities?${activitiesQueryString}`,
+    { headers: { Cookie: (await cookies()).toString() } },
   ).then(async (response) => await response.json());
 
   const demoUrl = Object.hasOwn(decodedParams, demoParam)

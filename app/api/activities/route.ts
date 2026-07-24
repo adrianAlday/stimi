@@ -1,4 +1,5 @@
 import { createClient } from "@/app/_utils/supabase/server";
+import { withAuth } from "@/app/_utils/withAuth";
 import { NextRequest, NextResponse } from "next/server";
 
 export const defaultActivitiesPageSize = 200;
@@ -106,12 +107,15 @@ export const POST = async (request: NextRequest) => {
   });
 };
 
-export const GET = async (request: NextRequest) => {
-  return NextResponse.json(
-    await selectActivities(
-      Object.fromEntries(
-        request.nextUrl.searchParams.entries(),
-      ) as selectActivitiesProps,
-    ),
-  );
-};
+export const GET = withAuth(
+  async (request: NextRequest) => {
+    return NextResponse.json(
+      await selectActivities(
+        Object.fromEntries(
+          request.nextUrl.searchParams.entries(),
+        ) as selectActivitiesProps,
+      ),
+    );
+  },
+  { matchableParamKeys: ["strava_athlete_id"] },
+);
