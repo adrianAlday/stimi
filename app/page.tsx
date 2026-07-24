@@ -61,3 +61,4 @@ export default HomePage;
 // delete user in admin panel?
 // retry if history download fails?
 // favicon
+// cookie settings?
