@@ -60,3 +60,4 @@ export default HomePage;
 // show athlete profile picture then open
 // delete user in admin panel?
 // retry if history download fails?
+// favicon
