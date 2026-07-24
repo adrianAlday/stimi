@@ -1,14 +1,17 @@
-import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { DateTime } from "luxon";
 import { Suspense } from "react";
 import Bouncer from "@/_components/Bouncer";
-import { defaultActivitiesPageSize } from "@/app/api/activities/route";
+import {
+  defaultActivitiesPageSize,
+  getActivitiesReponse,
+} from "@/app/api/activities/route";
 import { Params } from "@/app/_utils/types";
 import { getCookie } from "@/app/_utils/cookies";
 import { decodeParams } from "@/app/_utils/url";
 import { isAdmin } from "@/app/_utils/isAdmin";
 import { weeksToShow } from "@/app/_utils/data";
+import { getAccessTokenResponse } from "@/app/api/access-token/route";
 
 type DataFetchingProps = {
   now: DateTime<true>;
@@ -16,25 +19,24 @@ type DataFetchingProps = {
   pageNumber: number;
 };
 const DataFetching = async ({ now, id, pageNumber }: DataFetchingProps) => {
-  const resolvedHeaders = await headers();
-  const host = resolvedHeaders.get("host");
-  const baseUrl = `http://${host}`;
+  const accessTokenResponse = await getAccessTokenResponse(id);
 
-  const activitiesResponse = await fetch(`${baseUrl}/api/activities`, {
-    method: "POST",
-    headers: { Cookie: (await cookies()).toString() },
-    credentials: "include",
-    body: JSON.stringify({
-      id,
-      page: `${pageNumber}`,
-    }),
-  }).then(async (response) => await response.json());
+  const rawActivitiesResponse = await getActivitiesReponse({
+    accessToken: accessTokenResponse.access_token,
+    page: `${pageNumber}`,
+  });
+  const activitiesResponse = (
+    rawActivitiesResponse as unknown as { errors: unknown }
+  ).errors
+    ? []
+    : rawActivitiesResponse;
 
   redirect(
     `/people/${id}${
-      !activitiesResponse.get.length ||
-      DateTime.fromISO(activitiesResponse.get.reverse()[0].start_date_local) <
-        now.minus({ weeks: weeksToShow + 2 })
+      !activitiesResponse.length ||
+      DateTime.fromISO(
+        activitiesResponse.reverse()[0].start_date_local as string,
+      ) < now.minus({ weeks: weeksToShow + 2 })
         ? ""
         : `/download?p=${pageNumber + 1}`
     }`,

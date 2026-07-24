@@ -1,12 +1,13 @@
-import Bars from "@/_components/Bars";
+import Bars, { Activity } from "@/_components/Bars";
 import { getCookie } from "@/app/_utils/cookies";
 import { weeksToShow } from "@/app/_utils/data";
 import { isAdmin } from "@/app/_utils/isAdmin";
 import { Params } from "@/app/_utils/types";
 import { decodeParams, generateSignupUrl } from "@/app/_utils/url";
+import { selectActivities } from "@/app/api/activities/route";
 import { demoParam } from "@/app/signup/page";
 import { DateTime } from "luxon";
-import { cookies, headers } from "next/headers";
+import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
 type PersonPageProps = {
@@ -31,35 +32,22 @@ const PersonPage = async ({ params, searchParams }: PersonPageProps) => {
     redirect("/signup");
   }
 
-  const resolvedHeaders = await headers();
-  const host = resolvedHeaders.get("host");
-  const baseUrl = `http://${host}`;
-
-  const activitesParams = {
+  const activitiesResponse = await selectActivities({
     strava_athlete_id: pathId,
     after: userIsAdmin
       ? decodedParams.after || ""
       : DateTime.now()
           .minus({ weeks: weeksToShow + 2 })
           .toISODate(),
-  };
-  const activitiesQueryString = new URLSearchParams(activitesParams).toString();
-
-  const activitiesResponse = await fetch(
-    `${baseUrl}/api/activities?${activitiesQueryString}`,
-    {
-      headers: { Cookie: (await cookies()).toString() },
-      credentials: "include",
-    },
-  ).then(async (response) => await response.json());
+  });
 
   const demoUrl = Object.hasOwn(decodedParams, demoParam)
-    ? generateSignupUrl(resolvedHeaders)
+    ? generateSignupUrl(await headers())
     : undefined;
 
-  const { profile } = activitiesResponse.profile.data[0];
+  const { profile } = activitiesResponse.profile.data![0];
 
-  const activities = activitiesResponse.activities.data.map(
+  const activities = activitiesResponse.activities.data!.map(
     (activity: { [key: string]: string }) =>
       Object.keys(activity).reduce(
         (accumulator, key) => {
@@ -72,7 +60,7 @@ const PersonPage = async ({ params, searchParams }: PersonPageProps) => {
         },
         {} as { [key: string]: string },
       ),
-  );
+  ) as unknown as Activity[];
 
   return (
     <main>

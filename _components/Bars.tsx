@@ -7,7 +7,7 @@ import Image from "next/image";
 import SignupButton from "./SignupButton";
 import { weeksToShow } from "@/app/_utils/data";
 
-type Activity = {
+export type Activity = {
   sportType: string;
   startDateLocal: string;
   movingTime: number;
