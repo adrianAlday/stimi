@@ -12,63 +12,60 @@ import { cookies } from "next/headers";
 import { cookieName } from "@/app/_utils/cookieName";
 import { withAuth } from "@/app/_utils/withAuth";
 
-export const DELETE = async (
-  _request: NextRequest,
-  { params }: { params: Promise<Params> },
-) => {
-  const resolvedParams = await params;
-  const decodedParams = decodeParams(resolvedParams);
-  const pathId = decodedParams.id;
+export const DELETE = withAuth(
+  async (_request: NextRequest, { params }: { params: Promise<Params> }) => {
+    const resolvedParams = await params;
+    const decodedParams = decodeParams(resolvedParams);
+    const pathId = decodedParams.id;
 
-  const cookie = await getCookie();
-  const cookieId = cookie?.id;
-  const userIsAdmin = isAdmin(cookieId);
+    const refreshTokenResponse = await getRefreshTokenResponse(pathId);
 
-  if (!pathId || !cookieId || (Number(pathId) !== cookieId && !userIsAdmin)) {
-    return NextResponse.json(null, { status: 500 });
-  }
+    if (refreshTokenResponse.success) {
+      const revokeResponse = await fetch(
+        "https://www.strava.com/oauth/revoke",
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Basic ${btoa(`${process.env.NEXT_PUBLIC_STRAVA_CLIENT_ID}:${process.env.STRAVA_CLIENT_SECRET}`)}`,
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+          body: new URLSearchParams({
+            token: refreshTokenResponse.data[0].refresh_token,
+          }),
+        },
+      );
 
-  const refreshTokenResponse = await getRefreshTokenResponse(pathId);
+      if (revokeResponse.ok) {
+        const supabase = await createClient();
 
-  if (refreshTokenResponse.success) {
-    const revokeResponse = await fetch("https://www.strava.com/oauth/revoke", {
-      method: "POST",
-      headers: {
-        Authorization: `Basic ${btoa(`${process.env.NEXT_PUBLIC_STRAVA_CLIENT_ID}:${process.env.STRAVA_CLIENT_SECRET}`)}`,
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-      body: new URLSearchParams({
-        token: refreshTokenResponse.data[0].refresh_token,
-      }),
-    });
+        const deleteAthleteResponse = await supabase
+          .from("strava_athletes")
+          .delete()
+          .eq("id", pathId);
 
-    if (revokeResponse.ok) {
-      const supabase = await createClient();
+        if (deleteAthleteResponse.success) {
+          const cookieData = { id: "" };
 
-      const deleteAthleteResponse = await supabase
-        .from("strava_athletes")
-        .delete()
-        .eq("id", pathId);
+          const token = await signJwt(cookieData);
 
-      if (deleteAthleteResponse.success) {
-        const cookieData = { id: "" };
+          const cookieStore = await cookies();
 
-        const token = await signJwt(cookieData);
+          cookieStore.set(cookieName, token, {
+            httpOnly: false,
+            path: "/",
+            sameSite: "lax",
+            maxAge: 60 * 60 * 24 * 400,
+          });
 
-        const cookieStore = await cookies();
-
-        cookieStore.set(cookieName, token, {
-          httpOnly: false,
-          path: "/",
-          sameSite: "lax",
-          maxAge: 60 * 60 * 24 * 400,
-        });
-
-        return new Response(null, { status: 204 });
+          return new Response(null, { status: 204 });
+        }
       }
     }
-  }
-};
+
+    return NextResponse.json(null, { status: 500 });
+  },
+  { matchableParamKeys: ["id"] },
+);
 
 export const GET = withAuth(async (_request, { params }) => {
   const resolvedParams = await params;
