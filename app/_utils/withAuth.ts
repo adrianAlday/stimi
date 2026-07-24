@@ -18,6 +18,7 @@ export const withAuth =
 
     const userIsAdmin = isAdmin(cookieId);
 
+    console.log("cookieId", cookieId);
     console.log("matchableParamKeys", matchableParamKeys);
     const decodedParams = matchableParamKeys.length
       ? decodeParams({
