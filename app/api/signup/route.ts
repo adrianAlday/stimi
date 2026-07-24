@@ -54,7 +54,7 @@ export const GET = async (request: NextRequest) => {
 
     const cookieStore = await cookies();
 
-    cookieStore.set(cookieName, token, {
+    await cookieStore.set(cookieName, token, {
       httpOnly: false,
       path: "/",
       sameSite: "lax",
