@@ -18,6 +18,7 @@ export const withAuth =
 
     const userIsAdmin = isAdmin(cookieId);
 
+    console.log("matchableParamKeys", matchableParamKeys);
     const decodedParams = matchableParamKeys.length
       ? decodeParams({
           ...Object.fromEntries(request.nextUrl.searchParams),
