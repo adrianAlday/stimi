@@ -1,6 +1,7 @@
 import { createClient } from "@/app/_utils/supabase/server";
 import { withAuth } from "@/app/_utils/withAuth";
 import { NextRequest, NextResponse } from "next/server";
+import { getAccessTokenResponse } from "../access-token/route";
 
 export const defaultActivitiesPageSize = 200;
 
@@ -91,21 +92,29 @@ export const deleteActivity = async (activityId: string) => {
   return await supabase.from("strava_activities").delete().eq("id", activityId);
 };
 
-export const POST = async (request: NextRequest) => {
-  const rawActivitiesResponse = await getActivitiesReponse(
-    Object.fromEntries(request.nextUrl.searchParams.entries()),
-  );
-  const activitiesResponse = (
-    rawActivitiesResponse as unknown as { errors: unknown }
-  ).errors
-    ? []
-    : rawActivitiesResponse;
+export const POST = withAuth(
+  async (request: NextRequest) => {
+    const { id, page } = await request.json();
 
-  return NextResponse.json({
-    get: activitiesResponse,
-    upsert: await upsertActivities(activitiesResponse),
-  });
-};
+    const accessTokenResponse = await getAccessTokenResponse(id);
+
+    const rawActivitiesResponse = await getActivitiesReponse({
+      accessToken: accessTokenResponse.access_token,
+      page,
+    });
+    const activitiesResponse = (
+      rawActivitiesResponse as unknown as { errors: unknown }
+    ).errors
+      ? []
+      : rawActivitiesResponse;
+
+    return NextResponse.json({
+      get: activitiesResponse,
+      upsert: await upsertActivities(activitiesResponse),
+    });
+  },
+  { matchableParamKeys: ["id"] },
+);
 
 export const GET = withAuth(
   async (request: NextRequest) => {

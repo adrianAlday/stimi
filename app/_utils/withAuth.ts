@@ -21,6 +21,7 @@ export const withAuth =
     const decodedParams = matchableParamKeys.length
       ? decodeParams({
           ...Object.fromEntries(request.nextUrl.searchParams),
+          ...(request.method === "POST" ? await request.clone().json() : {}),
           ...(await context.params),
         })
       : {};

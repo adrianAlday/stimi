@@ -1,4 +1,4 @@
-import { headers } from "next/headers";
+import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { DateTime } from "luxon";
 import { Suspense } from "react";
@@ -20,35 +20,20 @@ const DataFetching = async ({ now, id, pageNumber }: DataFetchingProps) => {
   const host = resolvedHeaders.get("host");
   const baseUrl = `http://${host}`;
 
-  const accessTokenParams = {
-    id,
-  };
-  const accessTokenQueryString = new URLSearchParams(
-    accessTokenParams,
-  ).toString();
-  const accessTokenResponse = await fetch(
-    `${baseUrl}/api/access-token?${accessTokenQueryString}`,
-  ).then(async (response) => await response.json());
-
-  const targetLookBackDate = now.minus({ weeks: weeksToShow + 2 });
-
-  const activitesParams = {
-    accessToken: accessTokenResponse.access_token,
-    page: `${pageNumber}`,
-  };
-  const activitiesQueryString = new URLSearchParams(activitesParams).toString();
-  const activitiesResponse = await fetch(
-    `${baseUrl}/api/activities?${activitiesQueryString}`,
-    {
-      method: "POST",
-    },
-  ).then(async (response) => await response.json());
+  const activitiesResponse = await fetch(`${baseUrl}/api/activities`, {
+    method: "POST",
+    headers: { Cookie: (await cookies()).toString() },
+    body: JSON.stringify({
+      id,
+      page: `${pageNumber}`,
+    }),
+  }).then(async (response) => await response.json());
 
   redirect(
     `/people/${id}${
       !activitiesResponse.get.length ||
       DateTime.fromISO(activitiesResponse.get.reverse()[0].start_date_local) <
-        targetLookBackDate
+        now.minus({ weeks: weeksToShow + 2 })
         ? ""
         : `/download?p=${pageNumber + 1}`
     }`,
