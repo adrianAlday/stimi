@@ -5,6 +5,7 @@ import Bouncer from "@/_components/Bouncer";
 import {
   defaultActivitiesPageSize,
   getActivitiesReponse,
+  upsertActivities,
 } from "@/app/api/activities/route";
 import { Params } from "@/app/_utils/types";
 import { getCookie } from "@/app/_utils/cookies";
@@ -30,6 +31,8 @@ const DataFetching = async ({ now, id, pageNumber }: DataFetchingProps) => {
   ).errors
     ? []
     : rawActivitiesResponse;
+
+  await upsertActivities(activitiesResponse);
 
   redirect(
     `/people/${id}${

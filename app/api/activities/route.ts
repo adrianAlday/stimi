@@ -92,39 +92,39 @@ export const deleteActivity = async (activityId: string) => {
   return await supabase.from("strava_activities").delete().eq("id", activityId);
 };
 
-// export const POST = withAuth(
-//   async (request: NextRequest) => {
-//     const { id, page } = await request.json();
+export const POST = withAuth(
+  async (request: NextRequest) => {
+    const { id, page } = await request.json();
 
-//     const accessTokenResponse = await getAccessTokenResponse(id);
+    const accessTokenResponse = await getAccessTokenResponse(id);
 
-//     const rawActivitiesResponse = await getActivitiesReponse({
-//       accessToken: accessTokenResponse.access_token,
-//       page,
-//     });
-//     const activitiesResponse = (
-//       rawActivitiesResponse as unknown as { errors: unknown }
-//     ).errors
-//       ? []
-//       : rawActivitiesResponse;
+    const rawActivitiesResponse = await getActivitiesReponse({
+      accessToken: accessTokenResponse.access_token,
+      page,
+    });
+    const activitiesResponse = (
+      rawActivitiesResponse as unknown as { errors: unknown }
+    ).errors
+      ? []
+      : rawActivitiesResponse;
 
-//     return NextResponse.json({
-//       get: activitiesResponse,
-//       upsert: await upsertActivities(activitiesResponse),
-//     });
-//   },
-//   { matchableParamKeys: ["id"] },
-// );
+    return NextResponse.json({
+      get: activitiesResponse,
+      upsert: await upsertActivities(activitiesResponse),
+    });
+  },
+  { matchableParamKeys: ["id"] },
+);
 
-// export const GET = withAuth(
-//   async (request: NextRequest) => {
-//     return NextResponse.json(
-//       await selectActivities(
-//         Object.fromEntries(
-//           request.nextUrl.searchParams.entries(),
-//         ) as selectActivitiesProps,
-//       ),
-//     );
-//   },
-//   { matchableParamKeys: ["strava_athlete_id"] },
-// );
+export const GET = withAuth(
+  async (request: NextRequest) => {
+    return NextResponse.json(
+      await selectActivities(
+        Object.fromEntries(
+          request.nextUrl.searchParams.entries(),
+        ) as selectActivitiesProps,
+      ),
+    );
+  },
+  { matchableParamKeys: ["strava_athlete_id"] },
+);
