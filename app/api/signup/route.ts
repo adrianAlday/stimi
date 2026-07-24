@@ -55,9 +55,10 @@ export const GET = async (request: NextRequest) => {
     const cookieStore = await cookies();
 
     await cookieStore.set(cookieName, token, {
-      httpOnly: false,
       path: "/",
-      sameSite: "lax",
+      sameSite: "none",
+      secure: true,
+      httpOnly: true,
       maxAge: 60 * 60 * 24 * 400,
     });
 

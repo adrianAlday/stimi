@@ -51,9 +51,10 @@ export const DELETE = withAuth(
           const cookieStore = await cookies();
 
           cookieStore.set(cookieName, token, {
-            httpOnly: false,
             path: "/",
-            sameSite: "lax",
+            sameSite: "none",
+            secure: true,
+            httpOnly: true,
             maxAge: 60 * 60 * 24 * 400,
           });
 

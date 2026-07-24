@@ -47,7 +47,10 @@ const PersonPage = async ({ params, searchParams }: PersonPageProps) => {
 
   const activitiesResponse = await fetch(
     `${baseUrl}/api/activities?${activitiesQueryString}`,
-    { headers: { Cookie: (await cookies()).toString() } },
+    {
+      headers: { Cookie: (await cookies()).toString() },
+      credentials: "include",
+    },
   ).then(async (response) => await response.json());
 
   const demoUrl = Object.hasOwn(decodedParams, demoParam)

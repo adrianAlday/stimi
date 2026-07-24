@@ -23,6 +23,7 @@ const DataFetching = async ({ now, id, pageNumber }: DataFetchingProps) => {
   const activitiesResponse = await fetch(`${baseUrl}/api/activities`, {
     method: "POST",
     headers: { Cookie: (await cookies()).toString() },
+    credentials: "include",
     body: JSON.stringify({
       id,
       page: `${pageNumber}`,
